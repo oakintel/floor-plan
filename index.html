@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Semilore’s New Floor Plan</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Drag, rotate and resize furniture to try out layouts.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Semilore’s New Floor Plan">
@@ -66,6 +68,15 @@
   .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
   @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } .tiles { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 520px) { .page { padding: 28px 14px 60px; } .tiles { gap: 8px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; } }
+  .lay-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .lay-row input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: .9rem; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); }
+  .savelist { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+  .savelist li { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 6px 0; border-top: 1px solid var(--line); }
+  .savelist li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .savelist li small { color: var(--muted); margin-left: 6px; }
+  .savelist .btn { padding: 4px 11px; font-size: .8rem; }
+  .lay-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lay-msg { color: var(--accent, #2F7D5B); font-size: .8rem; margin: 10px 0 0; min-height: 1em; }
 </style>
 </head>
 <body>
@@ -98,6 +109,20 @@
     </div>
 
     <div class="side">
+      <div class="card">
+        <h2>Layouts</h2>
+        <p class="hint">Saved in this browser. Export a file to keep a copy or send it to someone, and import one to open it.</p>
+        <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn" id="lsave" style="background:#E6F1EB;border-color:#2F7D5B">Save</button></div>
+        <ul class="savelist" id="savelist"></ul>
+        <div class="lay-btns">
+          <button class="btn" id="limg">Download picture</button>
+          <button class="btn" id="lexp">Export file</button>
+          <button class="btn" id="limp">Import file</button>
+          <button class="btn" id="lreset">Reset everything</button>
+        </div>
+        <input type="file" id="lfile" accept=".json,application/json" hidden>
+        <p class="lay-msg" id="lmsg" role="status"></p>
+      </div>
       <div class="card">
         <h2>Doors</h2>
         <p class="hint">Swing directions are my guess.</p>
@@ -519,6 +544,113 @@
     b.addEventListener('click', function () { add(k.id); });
     tray.appendChild(b);
   });
+
+  // ---- layouts: save, load, export, import, picture, reset ----
+  var SAVES_KEY = 'floorplan-studio-saves';
+  var DEFAULT_DOORS = { closet: true };
+  var doorBoxes = dl.querySelectorAll('input');
+  function saveDoorsOnly() { renderDoors(); }
+  function snapshot() {
+    var mv = {}; Object.keys(MV).forEach(function (id) { var m = MV[id]; if (m.dx || m.dy || m.rot) mv[id] = { dx: m.dx, dy: m.dy, rot: m.rot }; });
+    var dr = {}; DOORS.forEach(function (d) { dr[d.id] = d.on; });
+    return { app: 'floor-plan', v: 1, items: JSON.parse(JSON.stringify(items)), moved: mv, doors: dr };
+  }
+  function num(v, d) { v = +v; return isFinite(v) ? v : d; }
+  function applySnapshot(sn) {
+    var src = (sn && sn.items) || [];
+    items = src.filter(function (i) { return i && kindById[i.kind]; }).map(function (i, n) {
+      var o = { uid: n + 1, kind: i.kind, x: num(i.x, 7.5), y: num(i.y, 7.5), rot: ((num(i.rot, 0) % 360) + 360) % 360 };
+      if (num(i.w, 0) >= 0.25) o.w = i.w * 1; if (num(i.h, 0) >= 0.25) o.h = i.h * 1;
+      return o;
+    });
+    uid = items.length + 1;
+    var mvs = (sn && sn.moved) || {};
+    Object.keys(MV).forEach(function (id) { var o = mvs[id]; MV[id].dx = o ? num(o.dx, 0) : 0; MV[id].dy = o ? num(o.dy, 0) : 0; MV[id].rot = o ? num(o.rot, 0) : 0; });
+    var dr = (sn && sn.doors) || DEFAULT_DOORS;
+    DOORS.forEach(function (d, n) { d.on = !!dr[d.id]; doorBoxes[n].checked = d.on; });
+    selected = null; selMv = null; undoItems = null; document.getElementById('und').disabled = true;
+    persist(); persistMv(); renderDoors(); render();
+  }
+  function readSaves() { try { var a = JSON.parse(localStorage.getItem(SAVES_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function writeSaves(a) { try { localStorage.setItem(SAVES_KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+  var lmsg = document.getElementById('lmsg'), lname = document.getElementById('lname'), savelist = document.getElementById('savelist');
+  function say(t) { lmsg.textContent = t; }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function renderSaves() {
+    var a = readSaves();
+    savelist.innerHTML = a.map(function (x, n) {
+      return '<li><span>' + esc(x.name) + '<small>' + (x.data.items || []).length + ' pieces</small></span><button class="btn" data-load="' + n + '">Load</button><button class="btn" data-del="' + n + '">Delete</button></li>';
+    }).join('');
+  }
+  savelist.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var a = readSaves();
+    if (b.hasAttribute('data-load')) { var x = a[+b.getAttribute('data-load')]; if (x) { applySnapshot(x.data); say('Loaded “' + x.name + '”.'); } }
+    else if (b.hasAttribute('data-del')) { var y = a[+b.getAttribute('data-del')]; if (y && confirm('Delete the saved layout “' + y.name + '”?')) { a.splice(+b.getAttribute('data-del'), 1); writeSaves(a); renderSaves(); say('Deleted.'); } }
+  });
+  function doSave() {
+    var name = lname.value.trim() || ('Layout ' + (readSaves().length + 1));
+    var a = readSaves(), i = a.findIndex(function (x) { return x.name.toLowerCase() === name.toLowerCase(); });
+    if (i >= 0 && !confirm('Replace the saved layout “' + a[i].name + '”?')) return;
+    var rec = { name: name, at: Date.now(), data: snapshot() };
+    if (i >= 0) a[i] = rec; else a.push(rec);
+    if (writeSaves(a)) { renderSaves(); lname.value = ''; say('Saved “' + name + '”.'); } else say('Could not save: browser storage is full or blocked. Try Export file instead.');
+  }
+  document.getElementById('lsave').addEventListener('click', doSave);
+  lname.addEventListener('keydown', function (e) { if (e.key === 'Enter') doSave(); });
+  function download(blob, fname) { var u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = fname; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 2000); }
+  function slug() { return (lname.value.trim() || 'layout').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'layout'; }
+  document.getElementById('lexp').addEventListener('click', function () {
+    download(new Blob([JSON.stringify(snapshot(), null, 2)], { type: 'application/json' }), 'floor-plan-' + slug() + '.json');
+    say('Exported. Open it later with Import file.');
+  });
+  var lfile = document.getElementById('lfile');
+  document.getElementById('limp').addEventListener('click', function () { lfile.value = ''; lfile.click(); });
+  lfile.addEventListener('change', function () {
+    var fl = lfile.files && lfile.files[0]; if (!fl) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try {
+        var sn = JSON.parse(rd.result);
+        if (!sn || !Array.isArray(sn.items)) throw new Error('bad');
+        applySnapshot(sn); say('Imported ' + items.length + ' pieces from ' + fl.name + '.');
+      } catch (e) { say('That file is not a floor plan layout.'); }
+    };
+    rd.readAsText(fl);
+  });
+  document.getElementById('lreset').addEventListener('click', function () {
+    if (!confirm('Reset everything? This clears your furniture, moved items and door choices. Saved layouts are kept.')) return;
+    applySnapshot({ items: [], moved: {}, doors: DEFAULT_DOORS });
+    var u = document.getElementById('unlock'); u.checked = false; svg.classList.remove('unlocked');
+    say('Reset. Your saved layouts are still here.');
+  });
+  // picture: serialize the plan with its styles inlined and draw it to a PNG
+  function planPng(done) {
+    var clone = svg.cloneNode(true);
+    var h = clone.querySelector('#hnd'); if (h) h.innerHTML = '';
+    [].forEach.call(clone.querySelectorAll('.selbox'), function (n) { n.remove(); });
+    var src = svg.querySelectorAll('*'), dst = clone.querySelectorAll('*'), props = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'opacity', 'font-family', 'font-size', 'font-weight', 'letter-spacing', 'text-anchor', 'display'];
+    // clone has the same node order; the handle layer was emptied, so walk only until sizes diverge
+    var n = Math.min(src.length, dst.length);
+    for (var i = 0; i < n; i++) { if (src[i].tagName !== dst[i].tagName) break; var cs = getComputedStyle(src[i]); props.forEach(function (p) { dst[i].style.setProperty(p, cs.getPropertyValue(p)); }); }
+    var vb = svg.viewBox.baseVal, k = 50, W = Math.round(vb.width * k), H = Math.round(vb.height * k);
+    clone.setAttribute('xmlns', NS); clone.setAttribute('width', W); clone.setAttribute('height', H);
+    var bg = document.createElementNS(NS, 'rect'); bg.setAttribute('x', vb.x); bg.setAttribute('y', vb.y); bg.setAttribute('width', vb.width); bg.setAttribute('height', vb.height); bg.setAttribute('fill', '#FBFAF7');
+    clone.insertBefore(bg, clone.firstChild);
+    var img = new Image();
+    img.onload = function () {
+      var c = document.createElement('canvas'); c.width = W; c.height = H;
+      c.getContext('2d').drawImage(img, 0, 0, W, H);
+      c.toBlob(function (b) { done(b, W, H); }, 'image/png');
+    };
+    img.onerror = function () { done(null); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+  }
+  window.__planPng = planPng;
+  document.getElementById('limg').addEventListener('click', function () {
+    planPng(function (b) { if (b) { download(b, 'floor-plan-' + slug() + '.png'); say('Picture downloaded.'); } else say('Could not make the picture in this browser.'); });
+  });
+  renderSaves();
   render();
 })();
 </script>
