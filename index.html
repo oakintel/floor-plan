@@ -68,15 +68,23 @@
   .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
   @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } .tiles { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 520px) { .page { padding: 28px 14px 60px; } .tiles { gap: 8px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; } }
-  .lay-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .lay-sec { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
+  .lay-sec.first { border-top: 0; margin-top: 4px; padding-top: 0; }
+  .lay-sec h3 { font: 600 .72rem/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
+  .lay-note { color: #4A4A52; font-size: .85rem; line-height: 1.45; margin: 0 0 12px; }
+  .lay-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .lay-row input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: .9rem; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); }
-  .savelist { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
-  .savelist li { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 6px 0; border-top: 1px solid var(--line); }
+  .savelist { list-style: none; margin: 0; padding: 0; display: grid; }
+  .savelist li { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 8px 0; }
+  .savelist li + li { border-top: 1px solid var(--line); }
   .savelist li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .savelist li small { color: var(--muted); margin-left: 6px; }
+  .savelist li.empty { color: var(--muted); font-size: .85rem; padding: 4px 0; }
   .savelist .btn { padding: 4px 11px; font-size: .8rem; }
   .lay-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-  .lay-msg { color: var(--accent, #2F7D5B); font-size: .8rem; margin: 10px 0 0; min-height: 1em; }
+  .btn.danger { color: #B0382E; border-color: #E8C9C5; }
+  .btn.danger:hover:not(:disabled) { background: #FDF3F2; border-color: #D9A39D; }
+  .lay-msg { color: #2F7D5B; font-size: .85rem; font-weight: 500; margin: 16px 0 0; min-height: 1.2em; }
 </style>
 </head>
 <body>
@@ -111,16 +119,32 @@
     <div class="side">
       <div class="card">
         <h2>Layouts</h2>
-        <p class="hint">Saved in this browser. Export a file to keep a copy or send it to someone, and import one to open it.</p>
-        <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn" id="lsave" style="background:#E6F1EB;border-color:#2F7D5B">Save</button></div>
-        <ul class="savelist" id="savelist"></ul>
-        <div class="lay-btns">
-          <button class="btn" id="limg">Download picture</button>
-          <button class="btn" id="lexp">Export file</button>
-          <button class="btn" id="limp">Import file</button>
-          <button class="btn" id="lreset">Reset everything</button>
+        <p class="hint">Try different arrangements and keep the ones you like.</p>
+
+        <div class="lay-sec first">
+          <h3>Saved on this device</h3>
+          <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn" id="lsave" style="background:#E6F1EB;border-color:#2F7D5B">Save</button></div>
+          <ul class="savelist" id="savelist"></ul>
         </div>
-        <input type="file" id="lfile" accept=".json,application/json" hidden>
+
+        <div class="lay-sec">
+          <h3>Send or open a file</h3>
+          <p class="lay-note">Export makes a file you can send to anyone. If someone sends you one, tap Import file and choose it to open their layout. It replaces what is on the plan, so save yours first.</p>
+          <div class="lay-btns"><button class="btn" id="lexp">Export file</button><button class="btn" id="limp">Import file</button></div>
+          <input type="file" id="lfile" accept=".json,application/json" hidden>
+        </div>
+
+        <div class="lay-sec">
+          <h3>Picture</h3>
+          <p class="lay-note">A PNG of the plan as it is now, for sharing or printing.</p>
+          <div class="lay-btns"><button class="btn" id="limg">Download picture</button></div>
+        </div>
+
+        <div class="lay-sec">
+          <h3>Start over</h3>
+          <p class="lay-note">Clears furniture, moved items and door choices. Saved layouts are kept.</p>
+          <div class="lay-btns"><button class="btn danger" id="lreset">Reset everything</button></div>
+        </div>
         <p class="lay-msg" id="lmsg" role="status"></p>
       </div>
       <div class="card">
@@ -578,6 +602,7 @@
   function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function renderSaves() {
     var a = readSaves();
+    if (!a.length) { savelist.innerHTML = '<li class="empty">Nothing saved yet.</li>'; return; }
     savelist.innerHTML = a.map(function (x, n) {
       return '<li><span>' + esc(x.name) + '<small>' + (x.data.items || []).length + ' pieces</small></span><button class="btn" data-load="' + n + '">Load</button><button class="btn" data-del="' + n + '">Delete</button></li>';
     }).join('');
