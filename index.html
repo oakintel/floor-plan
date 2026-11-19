@@ -444,11 +444,13 @@
     if (dragging.mv) {
       dragging.mv.dx = snap(dragging.dx0 + p.x - dragging.px); dragging.mv.dy = snap(dragging.dy0 + p.y - dragging.py);
       document.getElementById('mv-' + dragging.mv.id).setAttribute('transform', mvTransform(dragging.mv));
+      drawHandles();
       return;
     }
     dragging.it.x = snap(p.x + dragging.dx); dragging.it.y = snap(p.y + dragging.dy);
     var g = furn.querySelector('[data-uid="' + dragging.it.uid + '"]');
     if (g) g.setAttribute('transform', 'translate(' + f(dragging.it.x) + ' ' + f(dragging.it.y) + ') rotate(' + dragging.it.rot + ')');
+    drawHandles();
   });
   function endDrag() {
     if (!dragging) return;
