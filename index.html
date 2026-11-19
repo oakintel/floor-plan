@@ -118,6 +118,8 @@
         <button class="btn" id="rot" disabled>Rotate 90°</button>
         <button class="btn" id="del" disabled>Remove</button>
         <button class="btn" id="sug" style="background:#E6F1EB;border-color:#2F7D5B">Suggest a layout</button>
+        <button class="btn" id="lucky" style="background:#FBF1DE;border-color:#C9993F">I&rsquo;m feeling lucky</button>
+        <button class="btn" id="reshuf" disabled title="Shuffle only the furniture already on the plan">Reshuffle what&rsquo;s here</button>
         <button class="btn" id="und" disabled>Undo layout</button>
         <button class="btn" id="clr">Clear furniture</button>
         <button class="btn" id="rst">Reset moved items</button>
@@ -437,6 +439,7 @@
     drawHandles();
     var any = selected !== null || selMv !== null;
     document.getElementById('rot').disabled = !any;
+    document.getElementById('reshuf').disabled = !items.length;
     var del = document.getElementById('del');
     del.disabled = !any; del.textContent = selMv !== null ? 'Put back' : 'Remove';
     var si = selected !== null ? items.filter(function (i) { return i.uid === selected; })[0] : null;
@@ -682,6 +685,71 @@
   document.getElementById('limg').addEventListener('click', function () {
     planPng(function (b) { if (b) { download(b, 'floor-plan-' + slug() + '.png'); say('Picture downloaded.'); } else say('Could not make the picture in this browser.'); });
   });
+
+  // ---- I'm feeling lucky: shuffle the furniture into a random layout that fits ----
+  var LUCKY = { main: [0.4, 0.4, 14.6, 14.1], kitchen: [2.8, 15.0, 8.3, 25.3], deck: [-7.4, 0.6, -0.6, 13.4], hall: [11.7, 15.0, 14.7, 23.0] };
+  var DOOR_RECTS = { closet: [12.2, 11.7, 15, 14.5], iron: [9.73, 15.3, 11.33, 16.9], walkin: [11.9, 1.2, 15, 4.3], kitchenHall: [8.48, 18.75, 11.33, 21.6], kitchenMain: [2.2, 14.5, 6.8, 16.8] };
+  function keepClear() {
+    var r = [[2.2, 12.4, 6.8, 14.5], [12.5, 1.2, 15, 4.3]];   // kitchen doorway and walk-in opening
+    DOORS.forEach(function (d) { if (d.on && DOOR_RECTS[d.id]) r.push(DOOR_RECTS[d.id]); });
+    return r;
+  }
+  function boxHit(a, b, m) { return a[0] - m < b[2] && a[2] + m > b[0] && a[1] - m < b[3] && a[3] + m > b[1]; }
+  function luckyOnce(src, clear) {
+    var ex = keepClear(), placed = [], boxes = [], missed = [];
+    var order = src.map(function (it) { var k = kindById[it.kind]; return { it: it, w: it.w || k.w, h: it.h || k.h, k: k }; })
+      .sort(function (a, b) { return b.w * b.h - a.w * a.h; });
+    order.forEach(function (o) {
+      var zones = o.k.deck ? ['deck'] : (o.k.id === 'dining' ? (Math.random() < 0.6 ? ['kitchen', 'main'] : ['main', 'kitchen']) : ['main', 'kitchen', 'hall']);
+      for (var zi = 0; zi < zones.length; zi++) {
+        var z = LUCKY[zones[zi]];
+        for (var t = 0; t < 500; t++) {
+          var rot = [0, 90, 180, 270][Math.floor(Math.random() * 4)], sw = rot % 180 ? o.h : o.w, sh = rot % 180 ? o.w : o.h;
+          if (z[2] - z[0] < sw || z[3] - z[1] < sh) continue;
+          var cx = z[0] + sw / 2 + Math.random() * (z[2] - z[0] - sw), cy = z[1] + sh / 2 + Math.random() * (z[3] - z[1] - sh);
+          if (Math.random() < 0.7) {   // pull toward the nearest wall so it looks intentional
+            var dl = cx - sw / 2 - z[0], dr = z[2] - cx - sw / 2, dt = cy - sh / 2 - z[1], db = z[3] - cy - sh / 2, m = Math.min(dl, dr, dt, db);
+            if (m < 3.5) { if (m === dl) cx = z[0] + sw / 2; else if (m === dr) cx = z[2] - sw / 2; else if (m === dt) cy = z[1] + sh / 2; else cy = z[3] - sh / 2; }
+          }
+          cx = Math.min(z[2] - sw / 2, Math.max(z[0] + sw / 2, snap(cx))); cy = Math.min(z[3] - sh / 2, Math.max(z[1] + sh / 2, snap(cy)));
+          var box = [cx - sw / 2, cy - sh / 2, cx + sw / 2, cy + sh / 2], bad = false;
+          for (var i = 0; i < ex.length && !bad; i++) if (boxHit(box, ex[i], 0.05)) bad = true;
+          for (var j = 0; j < boxes.length && !bad; j++) if (boxHit(box, boxes[j], clear)) bad = true;
+          if (bad) continue;
+          boxes.push(box);
+          var n = { uid: 0, kind: o.it.kind, x: cx, y: cy, rot: rot };
+          if (o.it.w) n.w = o.it.w; if (o.it.h) n.h = o.it.h;
+          placed.push(n); return;
+        }
+      }
+      missed.push(o);
+    });
+    return { placed: placed, missed: missed };
+  }
+  function luckyShuffle(src) {
+    var best = null, steps = [0.6, 0.6, 0.45, 0.45, 0.3, 0.3, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1];
+    for (var tries = 0; tries < steps.length; tries++) {
+      var r = luckyOnce(src, steps[tries]);
+      if (!best || r.missed.length < best.missed.length) best = r;
+      if (!r.missed.length) break;
+    }
+    return best;
+  }
+  function luckyRun(useCurrent) {
+    var base = useCurrent && items.length ? items : LAYOUT.map(function (l) { return { uid: 0, kind: l[0], rot: 0 }; });
+    undoItems = { items: items, uid: uid };
+    var res = luckyShuffle(base), left = [];
+    res.missed.forEach(function (o) {   // never lose a piece: one that will not fit stays where it was
+      if (o.it.x !== undefined) { var c = { uid: 0, kind: o.it.kind, x: o.it.x, y: o.it.y, rot: o.it.rot }; if (o.it.w) c.w = o.it.w; if (o.it.h) c.h = o.it.h; res.placed.push(c); }
+      left.push(o.k.name);
+    });
+    items = res.placed.map(function (it, n) { it.uid = n + 1; return it; }); uid = items.length + 1;
+    selected = null; persist(); render();
+    document.getElementById('und').disabled = false;
+    say(left.length ? 'No room for: ' + left.join(', ') + '. Press again for another try.' : (useCurrent ? 'Reshuffled what was on the plan.' : 'Shuffled everything in.') + ' Press again for another, or Undo layout to go back.');
+  }
+  document.getElementById('lucky').addEventListener('click', function () { luckyRun(false); });
+  document.getElementById('reshuf').addEventListener('click', function () { luckyRun(true); });
   renderSaves();
   render();
 })();
