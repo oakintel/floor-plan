@@ -88,8 +88,47 @@
   .notes li { margin-bottom: 6px; }
   .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
   @media (max-width: 1199px) { .layout { grid-template-columns: 290px minmax(0, 1fr); grid-template-areas: "tray plan" "side side"; } .side { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; } }
-  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; grid-template-areas: "plan" "tray" "side"; } .tray-col { position: static; max-height: none; } .tiles { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 520px) { .page { padding: 28px 14px 60px; } .tiles { gap: 8px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; } }
+  .btn, .piece, .toggle, .theme-fab { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .zoomctl, .how summary { display: none; }
+  /* tablets and phones: one column, the furniture box becomes a dock pinned to the bottom of the screen */
+  @media (max-width: 980px) {
+    .layout { display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+    .plan-col { order: 1; width: 100%; gap: 16px; }
+    .tray-col { order: 2; min-width: 0; position: sticky; bottom: 0; top: auto; z-index: 30; max-height: none; overflow: visible; padding: 8px 12px 8px; border-radius: 16px 16px 0 0; box-shadow: 0 -8px 24px rgba(0,0,0,.14); margin: 0 -4px; }
+    .tray-col h2 { font-size: .85rem; margin: 0 0 6px; }
+    .tray-col .hint { display: none; }
+    .tray { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .piece { flex: 0 0 auto; min-width: 88px; min-height: 74px; padding: 8px 10px; gap: 6px; }
+    .piece b { font-size: .85rem; } .piece span { font-size: .78rem; }
+    .side { order: 3; width: 100%; }
+    .tiles { grid-template-columns: repeat(3, 1fr); }
+    svg.plan { min-width: 0; touch-action: pan-x pan-y; }
+    .zoomctl { display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin: 0 0 8px; font-size: .8rem; color: var(--muted); }
+    .zoomctl .btn { padding: 4px 14px; min-width: 44px; min-height: 36px; font-size: 1rem; line-height: 1; }
+    html body .theme-fab { bottom: calc(142px + env(safe-area-inset-bottom)); }
+    .page { padding-bottom: 40px; }
+  }
+  @media (max-height: 520px) and (max-width: 980px) { .tray-col { position: static; box-shadow: none; margin: 0; border-radius: 16px; } html body .theme-fab { bottom: 18px; } }
+  @media (max-width: 600px) {
+    .page { padding: 24px 14px 40px; }
+    h1 { font-size: 1.9rem; } .sub { font-size: .92rem; margin-bottom: 20px; }
+    .tiles { gap: 8px; margin-bottom: 16px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; }
+    .card { padding: 16px 16px; border-radius: 16px; }
+    .how summary { display: block; cursor: pointer; color: var(--muted); font-size: .85rem; padding: 4px 0 10px; list-style: none; }
+    .how summary::-webkit-details-marker { display: none; }
+    .how summary::after { content: " \25B8"; } .how[open] summary::after { content: " \25BE"; }
+    .how .hint { margin-bottom: 10px; }
+    .toolbar { gap: 8px; }
+    .toolbar .btn { min-height: 42px; padding: 8px 16px; font-size: .9rem; }
+    .size { font-size: .9rem; } .size input { width: 76px; min-height: 42px; font-size: 16px; }
+    .toggle { min-height: 36px; font-size: .92rem; } .toggle input, .doorlist input { width: 20px; height: 20px; }
+    .doorlist { gap: 14px; } .doorlist label { gap: 12px; }
+    .lay-row input[type=text] { font-size: 16px; min-height: 42px; }
+    .lay-row .btn, .lay-btns .btn, .savelist .btn { min-height: 40px; }
+    .savelist .btn { padding: 6px 14px; }
+    .legend-card .legend { grid-template-columns: 1fr 1fr; }
+    html body .theme-fab { right: 14px; width: 44px; height: 44px; }
+  }
   .lay-sec { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
   .lay-sec.first { border-top: 0; margin-top: 4px; padding-top: 0; }
   .lay-sec h3 { font: 600 .72rem/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
@@ -172,7 +211,8 @@
     <div class="plan-col">
     <div class="card">
       <h2>The plan</h2>
-      <p class="hint">Drag the fridge, the eat-in area or the planter to move them. Tick &ldquo;Move built-ins&rdquo; to unlock counters, sink, range, bath fixtures and the rest. Select any piece to get a rotate handle (tap for 90&deg;, drag for any angle) and, on furniture, a green corner dot to resize. Press &ldquo;Suggest a layout&rdquo; to place all your furniture, or add pieces from the box. Everything snaps to quarter feet. R rotates, Delete removes or puts back.</p>
+      <details class="how" open><summary>How this works</summary><p class="hint">Drag the fridge, the eat-in area or the planter to move them. Tick &ldquo;Move built-ins&rdquo; to unlock counters, sink, range, bath fixtures and the rest. Select any piece to get a rotate handle (tap for 90&deg;, drag for any angle) and, on furniture, a green corner dot to resize. Press &ldquo;Suggest a layout&rdquo; to place all your furniture, or add pieces from the box. Everything snaps to quarter feet. R rotates, Delete removes or puts back.</p></details>
+      <div class="zoomctl" id="zoomctl"><span id="zoomlbl">Fit to screen</span><button class="btn" id="zout" aria-label="Zoom out">&minus;</button><button class="btn" id="zin" aria-label="Zoom in">+</button></div>
       <div class="planwrap"><svg id="plan" class="plan" viewBox="-8.2 -3.6 29 35.8" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Floor plan of a studio apartment"></svg></div>
       <div class="toolbar">
         <button class="btn" id="rot" disabled>Rotate 90°</button>
@@ -475,13 +515,15 @@
     } else { hnd.innerHTML = ''; return; }
     var a = rot * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
     function P(lx, ly) { return [cx + lx * ca - ly * sa, cy + lx * sa + ly * ca]; }
-    var top = P(0, -h / 2), rp = P(0, -h / 2 - 1.0), out = '';
-    out += '<line x1="' + f(top[0]) + '" y1="' + f(top[1]) + '" x2="' + f(rp[0]) + '" y2="' + f(rp[1]) + '" stroke="#2F7D5B" stroke-width="0.07"/>';
-    out += '<g class="handle" data-h="rot" style="cursor:grab;touch-action:none"><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="0.55" fill="#fff" stroke="#2F7D5B" stroke-width="0.09"/>' +
-      '<text x="' + f(rp[0]) + '" y="' + f(rp[1] + 0.03) + '" font-size="0.72" font-family="Inter, system-ui, sans-serif" font-weight="700" fill="#2F7D5B" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">\u21BB</text></g>';
+    var ppf = (svg.getBoundingClientRect().width / 29) || 24;   // screen pixels per foot, so handles stay finger-sized
+    var R = Math.max(0.55, 13 / ppf), RS = Math.max(0.42, 10 / ppf), k = R / 0.55;
+    var top = P(0, -h / 2), rp = P(0, -h / 2 - Math.max(1.0, 28 / ppf)), out = '';
+    out += '<line x1="' + f(top[0]) + '" y1="' + f(top[1]) + '" x2="' + f(rp[0]) + '" y2="' + f(rp[1]) + '" stroke="#2F7D5B" stroke-width="' + f(0.07 * k) + '"/>';
+    out += '<g class="handle" data-h="rot" style="cursor:grab;touch-action:none"><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="' + f(Math.max(R, 22 / ppf)) + '" fill="transparent"/><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="' + f(R) + '" fill="#fff" stroke="#2F7D5B" stroke-width="' + f(0.09 * k) + '"/>' +
+      '<text x="' + f(rp[0]) + '" y="' + f(rp[1] + 0.03 * k) + '" font-size="' + f(0.72 * k) + '" font-family="Inter, system-ui, sans-serif" font-weight="700" fill="#2F7D5B" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">\u21BB</text></g>';
     if (size) {
       var cp = P(w / 2, h / 2);
-      out += '<g class="handle" data-h="size" style="cursor:nwse-resize;touch-action:none"><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="0.42" fill="#2F7D5B" stroke="#fff" stroke-width="0.08"/></g>';
+      out += '<g class="handle" data-h="size" style="cursor:nwse-resize;touch-action:none"><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="' + f(Math.max(RS, 15 / ppf)) + '" fill="transparent"/><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="' + f(RS) + '" fill="#2F7D5B" stroke="#fff" stroke-width="' + f(0.08 * (RS / 0.42)) + '"/></g>';
     }
     hnd.innerHTML = out;
   }
@@ -815,6 +857,27 @@
   }
   document.getElementById('lucky').addEventListener('click', function () { luckyRun(false); });
   document.getElementById('reshuf').addEventListener('click', function () { luckyRun(true); });
+  // phones and tablets: zoom the plan (pan by dragging empty space) and keep handles sized to the screen
+  var zoomSteps = [1, 1.6, 2.4], zoomAt = 0, planWrap = svg.parentNode;
+  function setZoom(n) {
+    n = Math.max(0, Math.min(zoomSteps.length - 1, n));
+    var cxr = planWrap.scrollWidth ? (planWrap.scrollLeft + planWrap.clientWidth / 2) / planWrap.scrollWidth : 0.5;
+    zoomAt = n; svg.style.width = n ? (zoomSteps[n] * 100) + '%' : '';
+    planWrap.scrollLeft = cxr * planWrap.scrollWidth - planWrap.clientWidth / 2;
+    document.getElementById('zoomlbl').textContent = n ? 'Zoom ' + zoomSteps[n] + '\u00d7' : 'Fit to screen';
+    document.getElementById('zin').disabled = n === zoomSteps.length - 1; document.getElementById('zout').disabled = n === 0;
+    drawHandles();
+  }
+  document.getElementById('zin').addEventListener('click', function () { setZoom(zoomAt + 1); });
+  document.getElementById('zout').addEventListener('click', function () { setZoom(zoomAt - 1); });
+  setZoom(0);
+  var lastW = svg.getBoundingClientRect().width;
+  if (window.ResizeObserver) new ResizeObserver(function () { var w = svg.getBoundingClientRect().width; if (Math.abs(w - lastW) > 1) { lastW = w; drawHandles(); } }).observe(svg);
+  var wide = window.matchMedia('(min-width: 981px)');
+  function onWide() { if (wide.matches && zoomAt) setZoom(0); }
+  if (wide.addEventListener) wide.addEventListener('change', onWide);
+  var how = document.querySelector('details.how');
+  if (how && window.matchMedia('(max-width: 600px)').matches) how.removeAttribute('open');
   // dark mode: the early script in <head> sets data-theme; this button flips it and remembers the choice
   var themeBtn = document.getElementById('theme'), themeMeta = document.querySelector('meta[name="theme-color"]');
   function paintTheme() {
