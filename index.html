@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Semilore’s New Floor Plan</title>
+<script>(function(){var t=null;try{t=localStorage.getItem("floorplan-studio-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t);})();</script>
+<meta name="theme-color" content="#F7F6F2">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Drag, rotate and resize furniture to try out layouts.">
@@ -22,6 +24,21 @@
   :root {
     --bg: #F7F6F2; --card: #FFFFFF; --ink: #23232A; --muted: #6E6E76; --line: #E8E6DF;
     --accent: #2F7D5B; --accent-soft: #E6F1EB; --wall: #23232A; --glass: #5AA0D2; --heat: #CD463C;
+    --ink2: #4A4A52; --line2: #D9D6CC; --hover: #FAF9F5; --soft: #FBFAF7; --blue: #3C5A8C; --green: #3C7A4A;
+    --amber-soft: #FBF1DE; --amber: #C9993F; --danger: #B0382E; --danger-line: #E8C9C5; --danger-hover: #FDF3F2; --danger-line2: #D9A39D;
+    --p-bg: #FBFAF7; --p-hw: #DEB070; --p-plank: #D6D2CC; --p-deck: #C9D6C5; --p-tile: #F1EEE8; --p-fx: #ECE8E0; --p-fxline: #A29C92;
+    --p-white: #FFFFFF; --p-bed: #E8F0FC; --p-lamp: #FFF4D2; --p-plant: #D5EBD5; --p-breaker: #FFE6B4; --p-bay: #EFE6D6; --p-mirror: #BBD8EA;
+    --p-muted: #6E6E76; --p-door: #4A4A52;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #131418; --card: #1D1F25; --ink: #ECEAE4; --muted: #9A9AA3; --line: #2C2F38;
+    --accent: #4DB380; --accent-soft: #1F3A2D; --wall: #D9D7D0;
+    --ink2: #B9B7B0; --line2: #3A3E49; --hover: #262932; --soft: #191B20; --blue: #8FB1E8; --green: #74C487;
+    --amber-soft: #3A2F18; --amber: #C9993F; --danger: #F08A80; --danger-line: #5A3532; --danger-hover: #2E1F1E; --danger-line2: #8A4A44;
+    --p-bg: #191B20; --p-hw: #5C4528; --p-plank: #44454B; --p-deck: #2D3B30; --p-tile: #2A2C33; --p-fx: #2B2E36; --p-fxline: #737887;
+    --p-white: #2A2D36; --p-bed: #263249; --p-lamp: #4A4121; --p-plant: #22402A; --p-breaker: #5A4A24; --p-bay: #4A3F2E; --p-mirror: #3B5A70;
+    --p-muted: #A9A9B2; --p-door: #B4B4BC;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -46,27 +63,27 @@
   .mv { cursor: grab; } .mv.built { pointer-events: none; cursor: default; }
   svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
   .mv .selbox { pointer-events: none; }
-  .size { font-size: .88rem; color: #4A4A52; display: inline-flex; align-items: center; gap: 6px; }
-  .size input { width: 64px; font: inherit; padding: 6px 8px; border: 1px solid #D9D6CC; border-radius: 8px; background: #fff; color: var(--ink); }
+  .size { font-size: .88rem; color: var(--ink2); display: inline-flex; align-items: center; gap: 6px; }
+  .size input { width: 64px; font: inherit; padding: 6px 8px; border: 1px solid var(--line2); border-radius: 8px; background: var(--card); color: var(--ink); }
   .size input:disabled { opacity: .4; }
   .doorlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: .9rem; }
   .doorlist label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; line-height: 1.35; }
-  .doorlist small { display: block; color: #4A4A52; font-size: .8rem; }
+  .doorlist small { display: block; color: var(--ink2); font-size: .8rem; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
-  .btn { font: inherit; font-size: .85rem; font-weight: 500; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .btn:hover:not(:disabled) { background: #FAF9F5; border-color: #D9D6CC; }
+  .btn { font: inherit; font-size: .85rem; font-weight: 500; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .btn:hover:not(:disabled) { background: var(--hover); border-color: var(--line2); }
   .btn:disabled { opacity: .4; cursor: default; }
-  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: #4A4A52; margin-left: auto; cursor: pointer; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink2); margin-left: auto; cursor: pointer; }
   .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: .88rem; }
   .legend li { display: flex; align-items: center; gap: 12px; }
   .sw { width: 28px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,.14); flex: none; }
-  .sw.line { height: 0; border: 0; border-top: 2px dashed #8A8A92; border-radius: 0; }
+  .sw.line { height: 0; border: 0; border-top: 2px dashed var(--p-muted); border-radius: 0; }
   .tray { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .piece { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 10px; min-height: 92px; font: inherit; color: var(--ink); text-align: left; background: #FBFAF7; border: 1px solid #D9D6CC; border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+  .piece { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 10px; min-height: 92px; font: inherit; color: var(--ink); text-align: left; background: var(--soft); border: 1px solid var(--line2); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
   .piece:hover { border-color: var(--accent); background: var(--accent-soft); }
-  .piece i { display: block; background: #fff; border: 1.5px solid #3C5A8C; border-radius: 3px; max-width: 100%; }
+  .piece i { display: block; background: var(--card); border: 1.5px solid var(--blue); border-radius: 3px; max-width: 100%; }
   .piece b { font-size: .95rem; font-weight: 600; display: block; color: var(--ink); line-height: 1.25; }
-  .piece span { font-size: .85rem; color: #4A4A52; }
+  .piece span { font-size: .85rem; color: var(--ink2); }
   .notes { margin: 0; padding-left: 18px; font-size: .88rem; line-height: 1.55; color: var(--ink); }
   .notes li { margin-bottom: 6px; }
   .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
@@ -76,9 +93,9 @@
   .lay-sec { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
   .lay-sec.first { border-top: 0; margin-top: 4px; padding-top: 0; }
   .lay-sec h3 { font: 600 .72rem/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
-  .lay-note { color: #4A4A52; font-size: .85rem; line-height: 1.45; margin: 0 0 12px; }
+  .lay-note { color: var(--ink2); font-size: .85rem; line-height: 1.45; margin: 0 0 12px; }
   .lay-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .lay-row input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: .9rem; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); }
+  .lay-row input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: .9rem; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); }
   .savelist { list-style: none; margin: 0; padding: 0; display: grid; }
   .savelist li { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 8px 0; }
   .savelist li + li { border-top: 1px solid var(--line); }
@@ -87,9 +104,52 @@
   .savelist li.empty { color: var(--muted); font-size: .85rem; padding: 4px 0; }
   .savelist .btn { padding: 4px 11px; font-size: .8rem; }
   .lay-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-  .btn.danger { color: #B0382E; border-color: #E8C9C5; }
-  .btn.danger:hover:not(:disabled) { background: #FDF3F2; border-color: #D9A39D; }
-  .lay-msg { color: #2F7D5B; font-size: .85rem; font-weight: 500; margin: 16px 0 0; min-height: 1.2em; }
+  .btn.danger { color: var(--danger); border-color: var(--danger-line); }
+  .btn.danger:hover:not(:disabled) { background: var(--danger-hover); border-color: var(--danger-line2); }
+  .lay-msg { color: var(--accent); font-size: .85rem; font-weight: 500; margin: 16px 0 0; min-height: 1.2em; }
+
+  .btn.go { background: var(--accent-soft); border-color: var(--accent); }
+  .btn.go:hover:not(:disabled) { background: var(--accent-soft); filter: brightness(1.05); }
+  .btn.luck { background: var(--amber-soft); border-color: var(--amber); }
+  .btn.luck:hover:not(:disabled) { background: var(--amber-soft); filter: brightness(1.05); }
+  .theme-fab { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 50; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line2); background: var(--card); color: var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+  .theme-fab:hover { border-color: var(--accent); }
+  .theme-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-fab svg { width: 22px; height: 22px; display: block; }
+  .theme-fab .sun { display: none; }
+  html[data-theme="dark"] .theme-fab .sun { display: block; }
+  html[data-theme="dark"] .theme-fab .moon { display: none; }
+  /* dark plan: SVG colours are presentation attributes, so override them by value */
+  html[data-theme="dark"] svg.plan rect[fill="#FBFAF7" i] { fill: var(--p-bg); }
+  html[data-theme="dark"] svg.plan [fill="#23232A" i] { fill: var(--wall); }
+  html[data-theme="dark"] svg.plan [stroke="#23232A" i] { stroke: var(--wall); }
+  html[data-theme="dark"] svg.plan #hw > rect:first-child, html[data-theme="dark"] svg.plan polygon[fill="#DEB070" i] { fill: var(--p-hw); }
+  html[data-theme="dark"] svg.plan #pl > rect:first-child { fill: var(--p-plank); }
+  html[data-theme="dark"] svg.plan [fill="#C9D6C5" i] { fill: var(--p-deck); }
+  html[data-theme="dark"] svg.plan [fill="#F1EEE8" i] { fill: var(--p-tile); }
+  html[data-theme="dark"] svg.plan [fill="#ECE8E0" i] { fill: var(--p-fx); }
+  html[data-theme="dark"] svg.plan [stroke="#A29C92" i] { stroke: var(--p-fxline); }
+  html[data-theme="dark"] svg.plan [fill="#fff" i]:not(circle) { fill: var(--p-white); }
+  html[data-theme="dark"] svg.plan [fill="#E8F0FC" i] { fill: var(--p-bed); }
+  html[data-theme="dark"] svg.plan [fill="#FFF4D2" i] { fill: var(--p-lamp); }
+  html[data-theme="dark"] svg.plan [fill="#D5EBD5" i] { fill: var(--p-plant); }
+  html[data-theme="dark"] svg.plan [fill="#FFE6B4" i] { fill: var(--p-breaker); }
+  html[data-theme="dark"] svg.plan [fill="#EFE6D6" i] { fill: var(--p-bay); }
+  html[data-theme="dark"] svg.plan [fill="#BBD8EA" i] { fill: var(--p-mirror); }
+  html[data-theme="dark"] svg.plan text[fill="#6E6E76" i] { fill: var(--p-muted); }
+  html[data-theme="dark"] svg.plan [stroke="#4A4A52" i] { stroke: var(--p-door); }
+  html[data-theme="dark"] svg.plan [fill="#3C5A8C" i] { fill: var(--blue); }
+  html[data-theme="dark"] svg.plan [stroke="#3C5A8C" i] { stroke: var(--blue); }
+  html[data-theme="dark"] svg.plan [fill="#3C7A4A" i] { fill: var(--green); }
+  html[data-theme="dark"] svg.plan [stroke="#3C7A4A" i] { stroke: var(--green); }
+  html[data-theme="dark"] svg.plan [fill="#2F7D5B" i] { fill: var(--accent); }
+  html[data-theme="dark"] svg.plan [stroke="#2F7D5B" i] { stroke: var(--accent); }
+  html[data-theme="dark"] svg.plan circle[fill="#fff" i] { fill: var(--card); }
+  html[data-theme="dark"] svg.plan circle[stroke="#fff" i] { stroke: var(--card); }
+  html[data-theme="dark"] .piece i { background: var(--p-white) !important; }
+  html[data-theme="dark"] .piece i[data-k="bed"] { background: var(--p-bed) !important; }
+  html[data-theme="dark"] .piece i[data-k="lamp"] { background: var(--p-lamp) !important; }
+  html[data-theme="dark"] .piece i[data-k="plant"] { background: var(--p-plant) !important; border-color: var(--green) !important; }
 </style>
 </head>
 <body>
@@ -117,8 +177,8 @@
       <div class="toolbar">
         <button class="btn" id="rot" disabled>Rotate 90°</button>
         <button class="btn" id="del" disabled>Remove</button>
-        <button class="btn" id="sug" style="background:#E6F1EB;border-color:#2F7D5B">Suggest a layout</button>
-        <button class="btn" id="lucky" style="background:#FBF1DE;border-color:#C9993F">I&rsquo;m feeling lucky</button>
+        <button class="btn go" id="sug">Suggest a layout</button>
+        <button class="btn luck" id="lucky">I&rsquo;m feeling lucky</button>
         <button class="btn" id="reshuf" disabled title="Shuffle only the furniture already on the plan">Reshuffle what&rsquo;s here</button>
         <button class="btn" id="und" disabled>Undo layout</button>
         <button class="btn" id="clr">Clear furniture</button>
@@ -131,12 +191,12 @@
     <div class="card legend-card">
         <h2 style="margin-bottom:14px">Legend</h2>
         <ul class="legend">
-          <li><span class="sw" style="background:#23232A"></span>Wall</li>
-          <li><span class="sw" style="background:#5AA0D2"></span>Window</li>
-          <li><span class="sw" style="background:#CD463C"></span>Electric baseboard heater</li>
-          <li><span class="sw" style="background:#DEB070"></span>Hardwood floor</li>
-          <li><span class="sw" style="background:#D6D2CC"></span>Vinyl plank (kitchen)</li>
-          <li><span class="sw" style="background:#C9D6C5"></span>Private roof deck (outside)</li>
+          <li><span class="sw" style="background:var(--wall)"></span>Wall</li>
+          <li><span class="sw" style="background:var(--glass)"></span>Window</li>
+          <li><span class="sw" style="background:var(--heat)"></span>Electric baseboard heater</li>
+          <li><span class="sw" style="background:var(--p-hw)"></span>Hardwood floor</li>
+          <li><span class="sw" style="background:var(--p-plank)"></span>Vinyl plank (kitchen)</li>
+          <li><span class="sw" style="background:var(--p-deck)"></span>Private roof deck (outside)</li>
           <li><span class="sw line"></span>Fire escape and planter (outside)</li>
         </ul>
       </div>
@@ -149,7 +209,7 @@
 
         <div class="lay-sec first">
           <h3>Saved on this device</h3>
-          <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn" id="lsave" style="background:#E6F1EB;border-color:#2F7D5B">Save</button></div>
+          <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn go" id="lsave">Save</button></div>
           <ul class="savelist" id="savelist"></ul>
         </div>
 
@@ -183,6 +243,11 @@
 
   <p class="foot">Drawn by eye from video and photos, so treat every size as roughly right, within about half a foot. Door swings show which way each door opens. The small bathroom window on the east wall is placed from a note and may need nudging.</p>
 </div>
+
+<button class="theme-fab" id="theme" type="button" aria-label="Switch to dark mode" title="Dark mode">
+  <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
+  <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>
+</button>
 
 <script>
 (function () {
@@ -574,7 +639,7 @@
     var b = document.createElement('button');
     b.className = 'piece'; b.type = 'button';
     var scale = Math.min(7, 96 / Math.max(k.w, 1));   // px per ft in the little preview
-    b.innerHTML = '<i style="width:' + Math.max(8, k.w * scale) + 'px;height:' + Math.max(5, k.h * scale) + 'px;background:' + k.fill + (k.round ? ';border-radius:50%' : '') + (k.stroke ? ';border-color:' + k.stroke : '') + '"></i><div><b>' + k.name + '</b><span>' + k.w + ' × ' + k.h + ' ft</span></div>';
+    b.innerHTML = '<i data-k="' + k.id + '" style="width:' + Math.max(8, k.w * scale) + 'px;height:' + Math.max(5, k.h * scale) + 'px;background:' + k.fill + (k.round ? ';border-radius:50%' : '') + (k.stroke ? ';border-color:' + k.stroke : '') + '"></i><div><b>' + k.name + '</b><span>' + k.w + ' × ' + k.h + ' ft</span></div>';
     b.addEventListener('click', function () { add(k.id); });
     tray.appendChild(b);
   });
@@ -670,7 +735,7 @@
     for (var i = 0; i < n; i++) { if (src[i].tagName !== dst[i].tagName) break; var cs = getComputedStyle(src[i]); props.forEach(function (p) { dst[i].style.setProperty(p, cs.getPropertyValue(p)); }); }
     var vb = svg.viewBox.baseVal, k = 50, W = Math.round(vb.width * k), H = Math.round(vb.height * k);
     clone.setAttribute('xmlns', NS); clone.setAttribute('width', W); clone.setAttribute('height', H);
-    var bg = document.createElementNS(NS, 'rect'); bg.setAttribute('x', vb.x); bg.setAttribute('y', vb.y); bg.setAttribute('width', vb.width); bg.setAttribute('height', vb.height); bg.setAttribute('fill', '#FBFAF7');
+    var bg = document.createElementNS(NS, 'rect'); bg.setAttribute('x', vb.x); bg.setAttribute('y', vb.y); bg.setAttribute('width', vb.width); bg.setAttribute('height', vb.height); bg.setAttribute('fill', getComputedStyle(svg).getPropertyValue('--p-bg').trim() || '#FBFAF7');
     clone.insertBefore(bg, clone.firstChild);
     var img = new Image();
     img.onload = function () {
@@ -750,6 +815,21 @@
   }
   document.getElementById('lucky').addEventListener('click', function () { luckyRun(false); });
   document.getElementById('reshuf').addEventListener('click', function () { luckyRun(true); });
+  // dark mode: the early script in <head> sets data-theme; this button flips it and remembers the choice
+  var themeBtn = document.getElementById('theme'), themeMeta = document.querySelector('meta[name="theme-color"]');
+  function paintTheme() {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    themeBtn.title = dark ? 'Light mode' : 'Dark mode';
+    if (themeMeta) themeMeta.setAttribute('content', dark ? '#131418' : '#F7F6F2');
+  }
+  themeBtn.addEventListener('click', function () {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('floorplan-studio-theme', next); } catch (e) {}
+    paintTheme();
+  });
+  paintTheme();
   renderSaves();
   render();
 })();
