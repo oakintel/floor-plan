@@ -149,6 +149,7 @@ svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
 <li><span class="sw" style="background:#5AA0D2"></span>Window</li>
 <li><span class="sw" style="background:#CD463C"></span>Electric baseboard heater</li>
 <li><span class="sw" style="background:#DEB070"></span>Hardwood floor</li>
+<li><span class="sw" style="background:#F4F1EA"></span>Raised bay ledge (sill height, not floor)</li>
 <li><span class="sw" style="background:#E8D7BC"></span>Light brown tile (kitchen)</li>
 <li><span class="sw" style="background:#FBFBF8"></span>White tile (bath)</li>
 <li><span class="sw" style="background:#C9D6C5"></span>Private roof deck (outside)</li>
@@ -162,6 +163,7 @@ svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
 <p class="hint">From the scan, the walkthrough and Amit.</p>
 <ul class="notes">
 <li>Ceilings are 9&prime;1&Prime; in the kitchen, hall and bath, and up to 9&prime;11&Prime; in the main room.</li>
+<li>The bay is a raised, painted ledge at sill height, not floor. Seats go on the floor in front of it, facing the window.</li>
 <li>Gas range and electric baseboard heat.</li>
 <li>Water and garbage are included. You pay gas, electric and internet.</li>
 <li>Internet: Amit suggests Sonic or Monkey Brains (a local provider).</li>
@@ -239,8 +241,11 @@ s += rect(12.5, 9.0, 2.7, 5.1, 'fill="' + C.tile + '"'); // small closet, from t
 s += rect(8.9, 23.1, 6.65, 5.5, 'fill="url(#bt)"'); // bath: white tile
 // bay: the scan gives its 8.8 ft width, the depth is by eye
 var bay = '1.9,0 3.4,-1.8 9.2,-1.8 10.7,0';
-s += '<polygon points="' + bay + '" fill="' + C.hw + '"/>';
-s += '<polygon points="2.4,-0.1 3.7,-1.5 8.9,-1.5 10.2,-0.1" fill="#EFE6D6" stroke="#A69578" stroke-width="0.04"/>';
+// the bay is not floor: it is a raised, painted ledge at sill height (about 2.3 ft), flush with the wall below
+s += '<polygon points="' + bay + '" fill="#F4F1EA"/>';
+s += '<polygon points="2.4,-0.1 3.7,-1.5 8.9,-1.5 10.2,-0.1" fill="none" stroke="#B9B3A6" stroke-width="0.04" stroke-dasharray="0.18 0.12"/>';
+s += '<line x1="1.9" y1="0" x2="10.7" y2="0" stroke="#8A8A92" stroke-width="0.06"/>';
+s += text(6.3, -0.75, 'raised ledge, about 2.3 ft up', 0.28, { w: 500 });
 // kitchen and bath fixtures
 s += mv('counterW', 'West counter', 0.2, 21.55, 2.2, 5.05, fixture(0.2, 21.55, 2.2, 5.05, ''), true);
 s += mv('counterS', 'South-west counter', 0.2, 26.6, 3.1, 2.4, fixture(0.2, 26.6, 3.1, 2.4, ''), true);
@@ -605,17 +610,18 @@ if (a.kind === 'curtain' || b.kind === 'curtain' || TUCK[a.kind + '|' + b.kind])
 if (sat(P[a.uid], P[b.uid])) { add('bad', cap(itName(a)) + ' overlaps the ' + itName(b) + '.', a); bad[b.uid] = 1; }
 }
 live.forEach(function (it) {
-var k = kindById[it.kind], d = dimsOf(it), ok = true;
+var k = kindById[it.kind], d = dimsOf(it), ok = true, onLedge = false;
 // every sample point of the footprint has to be on usable floor
 var nx = Math.max(2, Math.ceil(d[0] / 0.25)), ny = Math.max(2, Math.ceil(d[1] / 0.25));
 for (var u = 0; u <= nx && ok; u++) for (var v = 0; v <= ny && ok; v++) {
 var lx = -d[0] / 2 + 0.05 + (d[0] - 0.1) * u / nx, ly = -d[1] / 2 + 0.05 + (d[1] - 0.1) * v / ny;
 if (k.round && (lx * lx) / (d[0] * d[0] / 4) + (ly * ly) / (d[1] * d[1] / 4) > 1) continue;
 var p = toWorld(it.x, it.y, it.rot, lx, ly);
-var inside = k.deck ? inR(DECK_R, p[0], p[1]) : (REGIONS.some(function (r) { return inR(r, p[0], p[1]); }) || inBay(p[0], p[1]));
-if (!inside) ok = false;
+var inside = k.deck ? inR(DECK_R, p[0], p[1]) : REGIONS.some(function (r) { return inR(r, p[0], p[1]); });
+if (!inside) { ok = false; if (!k.deck && inBay(p[0], p[1])) onLedge = true; }
 }
-if (!ok) {
+if (!ok && onLedge) add('bad', cap(itName(it)) + ' sits on the raised bay ledge. It is about 2.3 ft up, not floor.', it);
+else if (!ok) {
 var extra = '';
 if ((it.kind === 'bed' || it.kind === 'lowbed') && inR(WALKIN_R, it.x, it.y)) extra = ' The walk-in floor is only 60 to 64 in wide; this frame is ' + Math.round(Math.min(d[0], d[1]) * 12) + ' in.';
 add('bad', cap(itName(it)) + (k.deck ? ' is off the deck.' : ' runs into a wall or off the floor.') + extra, it);
@@ -765,9 +771,9 @@ var LAYOUTS = [
 ['recliner', 2.0, 2.6, 90], ['ottoman', 2.0, 5.3, 0], ['dresser', 11.55, 1.9, 90],
 ['sofa', 2.05, 9.95, 270], ['love', 8.5, 9.95, 90], ['bedside', 5.3, 9.95, 0], ['lamp', 4.4, 7.0, 0], ['vanity', 7.875, 13.2, 180],
 ['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) },
-{ n: 17, name: 'Bed hidden: low bed behind the walk-in curtain, bay seats, cinema (passes every check)', doors: { walkinCurtain: true }, items: [['lowbed', 15.2, 5.2, 0], ['bedside', 16.9, 1.0, 0],
-['desk', 1.4, 3.1, 270], ['dchair', 3.6, 3.1, 90], ['dresser', 11.55, 1.9, 90],
-['recliner', 4.6, 0.4, 180], ['love', 7.6, 0.4, 180], ['plant', 10.0, 1.2, 0], ['plant', 9.5, 3.0, 0], ['love', 7.8, 5.3, 90],
+{ n: 17, name: 'Bed hidden: low bed behind the walk-in curtain, window seats, cinema (passes every check)', doors: { walkinCurtain: true }, items: [['lowbed', 15.2, 5.2, 0], ['bedside', 16.9, 1.0, 0],
+['desk', 1.4, 3.1, 270], ['dchair', 3.6, 4.4, 90], ['dresser', 11.6, 1.9, 90],
+['love', 4.6, 1.7, 180], ['love', 7.6, 1.7, 180], ['plant', 10.0, 1.0, 0], ['plant', 10.0, 2.9, 0], ['recliner', 7.9, 5.3, 90],
 ['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
 ['sofa', 8.3, 9.75, 90], ['ottoman', 5.4, 9.75, 90], ['lamp', 4.0, 7.0, 0], ['shelf', 4.5, 12.4, 180], ['vanity', 7.875, 13.2, 180],
 ['dining', 4.8, 18.5, 90]].concat(DECK) }
