@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex, nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Semilore’s New Floor Plan</title>
-<script>(function(){var t=null;try{t=localStorage.getItem("floorplan-studio-theme")}catch(e){}if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t);})();</script>
 <meta name="theme-color" content="#F7F6F2">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -20,881 +20,661 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>(function(){var t=null;try{t=localStorage.getItem("floorplan-15th-theme");}catch(e){}if(!t)t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";document.documentElement.setAttribute("data-theme",t);})();</script>
 <style>
-  :root {
-    --bg: #F7F6F2; --card: #FFFFFF; --ink: #23232A; --muted: #6E6E76; --line: #E8E6DF;
-    --accent: #2F7D5B; --accent-soft: #E6F1EB; --wall: #23232A; --glass: #5AA0D2; --heat: #CD463C;
-    --ink2: #4A4A52; --line2: #D9D6CC; --hover: #FAF9F5; --soft: #FBFAF7; --blue: #3C5A8C; --green: #3C7A4A;
-    --amber-soft: #FBF1DE; --amber: #C9993F; --danger: #B0382E; --danger-line: #E8C9C5; --danger-hover: #FDF3F2; --danger-line2: #D9A39D;
-    --p-bg: #FBFAF7; --p-hw: #DEB070; --p-plank: #D6D2CC; --p-deck: #C9D6C5; --p-tile: #F1EEE8; --p-fx: #ECE8E0; --p-fxline: #A29C92;
-    --p-white: #FFFFFF; --p-bed: #E8F0FC; --p-lamp: #FFF4D2; --p-plant: #D5EBD5; --p-breaker: #FFE6B4; --p-bay: #EFE6D6; --p-mirror: #BBD8EA;
-    --p-muted: #6E6E76; --p-door: #4A4A52;
-  }
-  html[data-theme="dark"] {
-    color-scheme: dark;
-    --bg: #131418; --card: #1D1F25; --ink: #ECEAE4; --muted: #9A9AA3; --line: #2C2F38;
-    --accent: #4DB380; --accent-soft: #1F3A2D; --wall: #D9D7D0;
-    --ink2: #B9B7B0; --line2: #3A3E49; --hover: #262932; --soft: #191B20; --blue: #8FB1E8; --green: #74C487;
-    --amber-soft: #3A2F18; --amber: #C9993F; --danger: #F08A80; --danger-line: #5A3532; --danger-hover: #2E1F1E; --danger-line2: #8A4A44;
-    --p-bg: #191B20; --p-hw: #5C4528; --p-plank: #44454B; --p-deck: #2D3B30; --p-tile: #2A2C33; --p-fx: #2B2E36; --p-fxline: #737887;
-    --p-white: #2A2D36; --p-bed: #263249; --p-lamp: #4A4121; --p-plant: #22402A; --p-breaker: #5A4A24; --p-bay: #4A3F2E; --p-mirror: #3B5A70;
-    --p-muted: #A9A9B2; --p-door: #B4B4BC;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  .page { max-width: 1560px; margin: 0 auto; padding: 44px 24px 80px; }
-  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; margin: 0 0 8px; }
-  .sub { color: var(--muted); margin: 0 0 28px; max-width: 62ch; line-height: 1.5; }
-  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; max-width: 760px; }
-  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
-  .tile b { display: block; font-family: Fraunces, Georgia, serif; font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em; }
-  .tile span { color: var(--muted); font-size: .8rem; }
-  .layout { display: grid; grid-template-columns: 290px minmax(0, 1fr) 330px; grid-template-areas: "tray plan side"; gap: 20px; align-items: start; }
-  .tray-col { grid-area: tray; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
-  .plan-col { grid-area: plan; display: grid; gap: 20px; min-width: 0; align-items: start; }
-  .legend-card .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px 24px; }
-  .side { grid-area: side; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; }
-  .card h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 1.15rem; margin: 0 0 2px; letter-spacing: -0.01em; }
-  .card .hint { color: var(--muted); font-size: .85rem; margin: 0 0 14px; line-height: 1.45; }
-  .side { display: grid; gap: 20px; }
-  .planwrap { overflow-x: auto; }
-  svg.plan { display: block; width: 100%; min-width: 640px; height: auto; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
-  .mv { cursor: grab; } .mv.built { pointer-events: none; cursor: default; }
-  svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
-  .mv .selbox { pointer-events: none; }
-  .size { font-size: .88rem; color: var(--ink2); display: inline-flex; align-items: center; gap: 6px; }
-  .size input { width: 64px; font: inherit; padding: 6px 8px; border: 1px solid var(--line2); border-radius: 8px; background: var(--card); color: var(--ink); }
-  .size input:disabled { opacity: .4; }
-  .doorlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: .9rem; }
-  .doorlist label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; line-height: 1.35; }
-  .doorlist small { display: block; color: var(--ink2); font-size: .8rem; }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
-  .btn { font: inherit; font-size: .85rem; font-weight: 500; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
-  .btn:hover:not(:disabled) { background: var(--hover); border-color: var(--line2); }
-  .btn:disabled { opacity: .4; cursor: default; }
-  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink2); margin-left: auto; cursor: pointer; }
-  .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: .88rem; }
-  .legend li { display: flex; align-items: center; gap: 12px; }
-  .sw { width: 28px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,.14); flex: none; }
-  .sw.line { height: 0; border: 0; border-top: 2px dashed var(--p-muted); border-radius: 0; }
-  .tray { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .piece { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 10px; min-height: 92px; font: inherit; color: var(--ink); text-align: left; background: var(--soft); border: 1px solid var(--line2); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
-  .piece:hover { border-color: var(--accent); background: var(--accent-soft); }
-  .piece i { display: block; background: var(--card); border: 1.5px solid var(--blue); border-radius: 3px; max-width: 100%; }
-  .piece b { font-size: .95rem; font-weight: 600; display: block; color: var(--ink); line-height: 1.25; }
-  .piece span { font-size: .85rem; color: var(--ink2); }
-  .notes { margin: 0; padding-left: 18px; font-size: .88rem; line-height: 1.55; color: var(--ink); }
-  .notes li { margin-bottom: 6px; }
-  .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
-  @media (max-width: 1199px) { .layout { grid-template-columns: 290px minmax(0, 1fr); grid-template-areas: "tray plan" "side side"; } .side { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; } }
-  .btn, .piece, .toggle, .theme-fab { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-  .zoomctl, .how summary { display: none; }
-  /* tablets and phones: one column, the furniture box becomes a dock pinned to the bottom of the screen */
-  @media (max-width: 980px) {
-    .layout { display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
-    .plan-col { order: 1; width: 100%; gap: 16px; }
-    .tray-col { order: 2; min-width: 0; position: sticky; bottom: 0; top: auto; z-index: 30; max-height: none; overflow: visible; padding: 8px 12px 8px; border-radius: 16px 16px 0 0; box-shadow: 0 -8px 24px rgba(0,0,0,.14); margin: 0 -4px; }
-    .tray-col h2 { font-size: .85rem; margin: 0 0 6px; }
-    .tray-col .hint { display: none; }
-    .tray { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-    .piece { flex: 0 0 auto; min-width: 88px; min-height: 74px; padding: 8px 10px; gap: 6px; }
-    .piece b { font-size: .85rem; } .piece span { font-size: .78rem; }
-    .side { order: 3; width: 100%; }
-    .tiles { grid-template-columns: repeat(3, 1fr); }
-    svg.plan { min-width: 0; touch-action: pan-x pan-y; }
-    .zoomctl { display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin: 0 0 8px; font-size: .8rem; color: var(--muted); }
-    .zoomctl .btn { padding: 4px 14px; min-width: 44px; min-height: 36px; font-size: 1rem; line-height: 1; }
-    html body .theme-fab { bottom: calc(142px + env(safe-area-inset-bottom)); }
-    .page { padding-bottom: 40px; }
-  }
-  @media (max-height: 520px) and (max-width: 980px) { .tray-col { position: static; box-shadow: none; margin: 0; border-radius: 16px; } html body .theme-fab { bottom: 18px; } }
-  @media (max-width: 600px) {
-    .page { padding: 24px 14px 40px; }
-    h1 { font-size: 1.9rem; } .sub { font-size: .92rem; margin-bottom: 20px; }
-    .tiles { gap: 8px; margin-bottom: 16px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; }
-    .card { padding: 16px 16px; border-radius: 16px; }
-    .how summary { display: block; cursor: pointer; color: var(--muted); font-size: .85rem; padding: 4px 0 10px; list-style: none; }
-    .how summary::-webkit-details-marker { display: none; }
-    .how summary::after { content: " \25B8"; } .how[open] summary::after { content: " \25BE"; }
-    .how .hint { margin-bottom: 10px; }
-    .toolbar { gap: 8px; }
-    .toolbar .btn { min-height: 42px; padding: 8px 16px; font-size: .9rem; }
-    .size { font-size: .9rem; } .size input { width: 76px; min-height: 42px; font-size: 16px; }
-    .toggle { min-height: 36px; font-size: .92rem; } .toggle input, .doorlist input { width: 20px; height: 20px; }
-    .doorlist { gap: 14px; } .doorlist label { gap: 12px; }
-    .lay-row input[type=text] { font-size: 16px; min-height: 42px; }
-    .lay-row .btn, .lay-btns .btn, .savelist .btn { min-height: 40px; }
-    .savelist .btn { padding: 6px 14px; }
-    .legend-card .legend { grid-template-columns: 1fr 1fr; }
-    html body .theme-fab { right: 14px; width: 44px; height: 44px; }
-  }
-  .lay-sec { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
-  .lay-sec.first { border-top: 0; margin-top: 4px; padding-top: 0; }
-  .lay-sec h3 { font: 600 .72rem/1 Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
-  .lay-note { color: var(--ink2); font-size: .85rem; line-height: 1.45; margin: 0 0 12px; }
-  .lay-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .lay-row input[type=text] { flex: 1; min-width: 0; font: inherit; font-size: .9rem; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); }
-  .savelist { list-style: none; margin: 0; padding: 0; display: grid; }
-  .savelist li { display: flex; align-items: center; gap: 8px; font-size: .9rem; padding: 8px 0; }
-  .savelist li + li { border-top: 1px solid var(--line); }
-  .savelist li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .savelist li small { color: var(--muted); margin-left: 6px; }
-  .savelist li.empty { color: var(--muted); font-size: .85rem; padding: 4px 0; }
-  .savelist .btn { padding: 4px 11px; font-size: .8rem; }
-  .lay-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-  .btn.danger { color: var(--danger); border-color: var(--danger-line); }
-  .btn.danger:hover:not(:disabled) { background: var(--danger-hover); border-color: var(--danger-line2); }
-  .lay-msg { color: var(--accent); font-size: .85rem; font-weight: 500; margin: 16px 0 0; min-height: 1.2em; }
-
-  .btn.go { background: var(--accent-soft); border-color: var(--accent); }
-  .btn.go:hover:not(:disabled) { background: var(--accent-soft); filter: brightness(1.05); }
-  .btn.luck { background: var(--amber-soft); border-color: var(--amber); }
-  .btn.luck:hover:not(:disabled) { background: var(--amber-soft); filter: brightness(1.05); }
-  .theme-fab { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 50; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line2); background: var(--card); color: var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
-  .theme-fab:hover { border-color: var(--accent); }
-  .theme-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .theme-fab svg { width: 22px; height: 22px; display: block; }
-  .theme-fab .sun { display: none; }
-  html[data-theme="dark"] .theme-fab .sun { display: block; }
-  html[data-theme="dark"] .theme-fab .moon { display: none; }
-  /* dark plan: SVG colours are presentation attributes, so override them by value */
-  html[data-theme="dark"] svg.plan rect[fill="#FBFAF7" i] { fill: var(--p-bg); }
-  html[data-theme="dark"] svg.plan [fill="#23232A" i] { fill: var(--wall); }
-  html[data-theme="dark"] svg.plan [stroke="#23232A" i] { stroke: var(--wall); }
-  html[data-theme="dark"] svg.plan #hw > rect:first-child, html[data-theme="dark"] svg.plan polygon[fill="#DEB070" i] { fill: var(--p-hw); }
-  html[data-theme="dark"] svg.plan #pl > rect:first-child { fill: var(--p-plank); }
-  html[data-theme="dark"] svg.plan [fill="#C9D6C5" i] { fill: var(--p-deck); }
-  html[data-theme="dark"] svg.plan [fill="#F1EEE8" i] { fill: var(--p-tile); }
-  html[data-theme="dark"] svg.plan [fill="#ECE8E0" i] { fill: var(--p-fx); }
-  html[data-theme="dark"] svg.plan [stroke="#A29C92" i] { stroke: var(--p-fxline); }
-  html[data-theme="dark"] svg.plan [fill="#fff" i]:not(circle) { fill: var(--p-white); }
-  html[data-theme="dark"] svg.plan [fill="#E8F0FC" i] { fill: var(--p-bed); }
-  html[data-theme="dark"] svg.plan [fill="#FFF4D2" i] { fill: var(--p-lamp); }
-  html[data-theme="dark"] svg.plan [fill="#D5EBD5" i] { fill: var(--p-plant); }
-  html[data-theme="dark"] svg.plan [fill="#FFE6B4" i] { fill: var(--p-breaker); }
-  html[data-theme="dark"] svg.plan [fill="#EFE6D6" i] { fill: var(--p-bay); }
-  html[data-theme="dark"] svg.plan [fill="#BBD8EA" i] { fill: var(--p-mirror); }
-  html[data-theme="dark"] svg.plan text[fill="#6E6E76" i] { fill: var(--p-muted); }
-  html[data-theme="dark"] svg.plan [stroke="#4A4A52" i] { stroke: var(--p-door); }
-  html[data-theme="dark"] svg.plan [fill="#3C5A8C" i] { fill: var(--blue); }
-  html[data-theme="dark"] svg.plan [stroke="#3C5A8C" i] { stroke: var(--blue); }
-  html[data-theme="dark"] svg.plan [fill="#3C7A4A" i] { fill: var(--green); }
-  html[data-theme="dark"] svg.plan [stroke="#3C7A4A" i] { stroke: var(--green); }
-  html[data-theme="dark"] svg.plan [fill="#2F7D5B" i] { fill: var(--accent); }
-  html[data-theme="dark"] svg.plan [stroke="#2F7D5B" i] { stroke: var(--accent); }
-  html[data-theme="dark"] svg.plan circle[fill="#fff" i] { fill: var(--card); }
-  html[data-theme="dark"] svg.plan circle[stroke="#fff" i] { stroke: var(--card); }
-  html[data-theme="dark"] .piece i { background: var(--p-white) !important; }
-  html[data-theme="dark"] .piece i[data-k="bed"] { background: var(--p-bed) !important; }
-  html[data-theme="dark"] .piece i[data-k="lamp"] { background: var(--p-lamp) !important; }
-  html[data-theme="dark"] .piece i[data-k="plant"] { background: var(--p-plant) !important; border-color: var(--green) !important; }
+:root {
+--bg: #F7F6F2; --card: #FFFFFF; --ink: #23232A; --muted: #6E6E76; --line: #E8E6DF;
+--accent: #2F7D5B; --accent-soft: #E6F1EB; --wall: #23232A; --glass: #5AA0D2; --heat: #CD463C;
+--ink2: #4A4A52; --field: #FFFFFF; --hover: #FAF9F5; --edge: #D9D6CC; --tray: #FBFAF7; color-scheme: light;
+}
+:root[data-theme="dark"] {
+--bg: #141417; --card: #1D1D22; --ink: #ECEBE6; --muted: #A2A2AA; --line: #2E2E35;
+--accent: #63C394; --accent-soft: #1D3429; --ink2: #C6C6CD; --field: #26262C; --hover: #2C2C33; --edge: #3B3B44; --tray: #222228; color-scheme: dark;
+}
+:root[data-theme="dark"] svg.plan { filter: invert(0.9) hue-rotate(180deg) saturate(1.1); }
+:root[data-theme="dark"] .sw, :root[data-theme="dark"] .legend svg, :root[data-theme="dark"] .piece i { filter: invert(0.9) hue-rotate(180deg) saturate(1.1); }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1240px; margin: 0 auto; padding: 44px 24px 80px; }
+h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: -0.02em; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 0 0 28px; max-width: 62ch; line-height: 1.5; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; max-width: 760px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+.tile b { display: block; font-family: Fraunces, Georgia, serif; font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em; }
+.tile span { color: var(--muted); font-size: .8rem; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; }
+.card h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 1.15rem; margin: 0 0 2px; letter-spacing: -0.01em; }
+.card .hint { color: var(--muted); font-size: .85rem; margin: 0 0 14px; line-height: 1.45; }
+.side { display: grid; gap: 20px; }
+.planwrap { overflow-x: auto; }
+svg.plan { display: block; width: 100%; min-width: 640px; height: auto; user-select: none; -webkit-user-select: none; touch-action: pan-x pan-y pinch-zoom; }
+.howto summary { cursor: pointer; color: var(--muted); font-size: .85rem; margin: 4px 0 8px; }
+.zoom { display: flex; gap: 6px; justify-content: flex-end; margin: 0 0 8px; }
+.zoom .btn { padding: 5px 12px; }
+.mv { cursor: grab; } .mv.built { pointer-events: none; cursor: default; }
+svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
+.mv .selbox { pointer-events: none; }
+.size { font-size: .88rem; color: var(--ink2); display: inline-flex; align-items: center; gap: 6px; }
+.size input { width: 64px; font: inherit; padding: 6px 8px; border: 1px solid var(--edge); border-radius: 8px; background: var(--field); color: var(--ink); }
+.size input:disabled { opacity: .4; }
+.doorlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: .9rem; }
+.doorlist label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; line-height: 1.35; }
+.doorlist small { display: block; color: var(--ink2); font-size: .8rem; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+.btn { font: inherit; font-size: .85rem; font-weight: 500; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.btn:hover:not(:disabled) { background: var(--hover); border-color: var(--edge); }
+.btn:disabled { opacity: .4; cursor: default; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink2); margin-left: auto; cursor: pointer; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: .88rem; }
+.legend li { display: flex; align-items: center; gap: 12px; }
+.sw { width: 28px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,.14); flex: none; }
+.sw.line { height: 0; border: 0; border-top: 2px dashed #8A8A92; border-radius: 0; }
+.tray { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.piece { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 10px; min-height: 92px; font: inherit; color: var(--ink); text-align: left; background: var(--tray); border: 1px solid var(--edge); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+.piece:hover { border-color: var(--accent); background: var(--accent-soft); }
+.piece i { display: block; background: #fff; border: 1.5px solid #3C5A8C; border-radius: 3px; max-width: 100%; }
+.piece b { font-size: .95rem; font-weight: 600; display: block; color: var(--ink); line-height: 1.25; }
+.piece span { font-size: .85rem; color: var(--ink2); }
+.notes { margin: 0; padding-left: 18px; font-size: .88rem; line-height: 1.55; color: var(--ink); }
+.notes li { margin-bottom: 6px; }
+.foot { color: var(--muted); font-size: .8rem; margin-top: 22px; max-width: 70ch; line-height: 1.5; }
+@media (max-width: 980px) { .layout { grid-template-columns: minmax(0, 1fr); } .layout > * { min-width: 0; } .tiles { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) { svg.plan { min-width: 0; } .page { padding: 22px 10px 60px; } .card { padding: 16px 12px; border-radius: 14px; } .layout { gap: 14px; } }
+@media (max-width: 520px) { .page { padding: 28px 14px 60px; } .tiles { gap: 8px; } .tile { padding: 10px 12px; } .tile b { font-size: 1.3rem; } }
+.btn.primary { background: var(--accent-soft); border-color: var(--accent); }
+#theme { flex: none; margin-top: 8px; }
+.layrow { display: flex; gap: 8px; width: 100%; align-items: center; }
+.layrow select { flex: 1; min-width: 0; }
+.layrow .btn { flex: none; }
+.layrow select.btn { flex: 1; min-width: 0; width: 100%; text-overflow: ellipsis; }
+@media (max-width: 520px) { .layrow #sug { display: none; } .head h1 { font-size: 1.7rem; } .size { width: 100%; } }
 </style>
 </head>
 <body>
 <div class="page">
-  <h1>Semilore’s New Floor Plan</h1>
-  <p class="sub">Floor plan of a studio apartment, redrawn from walkthrough videos and photos. North is the street side. Try furniture on it; drag, rotate and resize pieces. Measure on site to confirm. Furniture sizes are estimates until you type in the real ones.</p>
-
-  <div class="tiles">
-    <div class="tile"><b>~425</b><span>sq ft studio</span></div>
-    <div class="tile"><b>15 × 14.5</b><span>ft main room</span></div>
-    <div class="tile"><b>1</b><span>private roof deck</span></div>
-  </div>
-
-  <div class="layout">
-    <div class="card tray-col">
-        <h2>Furniture box</h2>
-        <p class="hint">Sizes are estimates. Tap a piece to add it, then type its real size under the plan.</p>
-        <div class="tray" id="tray"></div>
-      </div>
-    <div class="plan-col">
-    <div class="card">
-      <h2>The plan</h2>
-      <details class="how" open><summary>How this works</summary><p class="hint">Drag the fridge, the eat-in area or the planter to move them. Tick &ldquo;Move built-ins&rdquo; to unlock counters, sink, range, bath fixtures and the rest. Select any piece to get a rotate handle (tap for 90&deg;, drag for any angle) and, on furniture, a green corner dot to resize. Press &ldquo;Suggest a layout&rdquo; to place all your furniture, or add pieces from the box. Everything snaps to quarter feet. R rotates, Delete removes or puts back.</p></details>
-      <div class="zoomctl" id="zoomctl"><span id="zoomlbl">Fit to screen</span><button class="btn" id="zout" aria-label="Zoom out">&minus;</button><button class="btn" id="zin" aria-label="Zoom in">+</button></div>
-      <div class="planwrap"><svg id="plan" class="plan" viewBox="-8.2 -3.6 29 35.8" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Floor plan of a studio apartment"></svg></div>
-      <div class="toolbar">
-        <button class="btn" id="rot" disabled>Rotate 90°</button>
-        <button class="btn" id="del" disabled>Remove</button>
-        <button class="btn go" id="sug">Suggest a layout</button>
-        <button class="btn luck" id="lucky">I&rsquo;m feeling lucky</button>
-        <button class="btn" id="reshuf" disabled title="Shuffle only the furniture already on the plan">Reshuffle what&rsquo;s here</button>
-        <button class="btn" id="und" disabled>Undo layout</button>
-        <button class="btn" id="clr">Clear furniture</button>
-        <button class="btn" id="rst">Reset moved items</button>
-        <span class="size">Size <input type="number" id="sw" min="0.25" step="0.25" disabled aria-label="Width in feet"> × <input type="number" id="sh" min="0.25" step="0.25" disabled aria-label="Depth in feet"> ft</span>
-        <label class="toggle" style="margin-left:0"><input type="checkbox" id="unlock"> Move built-ins</label>
-        <label class="toggle"><input type="checkbox" id="dims"> Show room sizes</label>
-      </div>
-    </div>
-    <div class="card legend-card">
-        <h2 style="margin-bottom:14px">Legend</h2>
-        <ul class="legend">
-          <li><span class="sw" style="background:var(--wall)"></span>Wall</li>
-          <li><span class="sw" style="background:var(--glass)"></span>Window</li>
-          <li><span class="sw" style="background:var(--heat)"></span>Electric baseboard heater</li>
-          <li><span class="sw" style="background:var(--p-hw)"></span>Hardwood floor</li>
-          <li><span class="sw" style="background:var(--p-plank)"></span>Vinyl plank (kitchen)</li>
-          <li><span class="sw" style="background:var(--p-deck)"></span>Private roof deck (outside)</li>
-          <li><span class="sw line"></span>Fire escape and planter (outside)</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="side">
-      <div class="card">
-        <h2>Layouts</h2>
-        <p class="hint">Try different arrangements and keep the ones you like.</p>
-
-        <div class="lay-sec first">
-          <h3>Saved on this device</h3>
-          <div class="lay-row"><input type="text" id="lname" maxlength="40" placeholder="Name this layout" aria-label="Layout name"><button class="btn go" id="lsave">Save</button></div>
-          <ul class="savelist" id="savelist"></ul>
-        </div>
-
-        <div class="lay-sec">
-          <h3>Send or open a file</h3>
-          <p class="lay-note">Export makes a file you can send to anyone. If someone sends you one, tap Import file and choose it to open their layout. It replaces what is on the plan, so save yours first.</p>
-          <div class="lay-btns"><button class="btn" id="lexp">Export file</button><button class="btn" id="limp">Import file</button></div>
-          <input type="file" id="lfile" accept=".json,application/json" hidden>
-        </div>
-
-        <div class="lay-sec">
-          <h3>Picture</h3>
-          <p class="lay-note">A PNG of the plan as it is now, for sharing or printing.</p>
-          <div class="lay-btns"><button class="btn" id="limg">Download picture</button></div>
-        </div>
-
-        <div class="lay-sec">
-          <h3>Start over</h3>
-          <p class="lay-note">Clears furniture, moved items and door choices. Saved layouts are kept.</p>
-          <div class="lay-btns"><button class="btn danger" id="lreset">Reset everything</button></div>
-        </div>
-        <p class="lay-msg" id="lmsg" role="status"></p>
-      </div>
-      <div class="card">
-        <h2>Doors</h2>
-        <p class="hint">Swing directions are my guess.</p>
-        <ul class="doorlist" id="doorlist"></ul>
-      </div>
-    </div>
-  </div>
-
-  <p class="foot">Drawn by eye from video and photos, so treat every size as roughly right, within about half a foot. Door swings show which way each door opens. The small bathroom window on the east wall is placed from a note and may need nudging.</p>
+<div class="head"><h1>Semilore’s New Floor Plan</h1><button class="btn" id="theme" type="button">Dark mode</button></div>
+<p class="sub">Floor plan of the new studio, redrawn from your Room Scanner scans of Nov 23 and 24. Room sizes, doors and windows are measured. North is the street side. Furniture sizes are still estimates until you type in the real ones.</p>
+<div class="tiles">
+<div class="tile"><b>~425</b><span>sq ft studio</span></div>
+<div class="tile"><b>12.5 × 14</b><span>ft main room</span></div>
+<div class="tile"><b>1</b><span>private roof deck</span></div>
 </div>
-
-<button class="theme-fab" id="theme" type="button" aria-label="Switch to dark mode" title="Dark mode">
-  <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
-  <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>
-</button>
-
+<div class="layout">
+<div class="card">
+<h2>The plan</h2>
+<details class="howto" id="howto" open><summary>How to use</summary><p class="hint">Drag the fridge or the garden trough to move them. Tick &ldquo;Move built-ins&rdquo; to unlock counters, sink, range, bath fixtures and the rest. Select any piece to get a rotate handle (tap for 90&deg;, drag for any angle) and, on furniture, a green corner dot to resize. Pick a numbered layout from the list to load it, or add pieces from the box. The shaded band is the back of a piece and the small arrow shows which way it faces. Everything snaps to quarter feet. R rotates, Delete removes or puts back.</p></details>
+<div class="zoom"><button class="btn" id="zOut" type="button" aria-label="Zoom out">&minus;</button><button class="btn" id="zFit" type="button">Fit</button><button class="btn" id="zIn" type="button" aria-label="Zoom in">+</button></div>
+<div class="planwrap"><svg id="plan" class="plan" viewBox="-9 -3.6 28.2 35" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Studio floor plan"></svg></div>
+<div class="toolbar">
+<button class="btn" id="rot" disabled>Rotate 90°</button>
+<button class="btn" id="del" disabled>Remove</button>
+<div class="layrow"><button class="btn" id="layPrev" type="button" aria-label="Previous layout">&larr; Prev</button><select class="btn" id="lay" aria-label="Layout to load"></select><button class="btn" id="layNext" type="button" aria-label="Next layout">Next &rarr;</button><button class="btn primary" id="sug">Reload</button></div>
+<button class="btn" id="und" disabled>Undo layout</button>
+<button class="btn" id="clr">Clear furniture</button>
+<button class="btn" id="rst">Reset moved items</button>
+<span class="size">Size <input type="number" id="sw" min="0.25" step="0.25" disabled aria-label="Width in feet"> × <input type="number" id="sh" min="0.25" step="0.25" disabled aria-label="Depth in feet"> ft</span>
+<label class="toggle" style="margin-left:0"><input type="checkbox" id="unlock"> Move built-ins</label>
+<label class="toggle"><input type="checkbox" id="dims" checked> Show room sizes</label>
+</div>
+</div>
+<div class="side">
+<div class="card">
+<h2>Doors</h2>
+<p class="hint">Positions and widths are from the scan. Swing directions are my guess.</p>
+<ul class="doorlist" id="doorlist"></ul>
+</div>
+<div class="card">
+<h2>Furniture box</h2>
+<p class="hint">Sizes are my guesses from your list. Tap a piece to add it, then type its real size under the plan.</p>
+<div class="tray" id="tray"></div>
+</div>
+<div class="card">
+<h2 style="margin-bottom:14px">Legend</h2>
+<ul class="legend">
+<li><span class="sw" style="background:#23232A"></span>Wall</li>
+<li><span class="sw" style="background:#5AA0D2"></span>Window</li>
+<li><span class="sw" style="background:#CD463C"></span>Electric baseboard heater</li>
+<li><span class="sw" style="background:#DEB070"></span>Hardwood floor</li>
+<li><span class="sw" style="background:#E8D7BC"></span>Light brown tile (kitchen)</li>
+<li><span class="sw" style="background:#FBFBF8"></span>White tile (bath)</li>
+<li><span class="sw" style="background:#C9D6C5"></span>Private roof deck (outside)</li>
+<li><span class="sw line"></span>Fire escape (outside)</li>
+<li><span class="sw" style="background:#B08A63"></span>Garden trough on the deck</li>
+<li><svg width="28" height="20" viewBox="0 0 28 20" style="flex:none"><rect x="1" y="1" width="26" height="18" rx="2" fill="#fff" stroke="#3C5A8C" stroke-width="1.2"/><rect x="1" y="1" width="26" height="5" fill="#3C5A8C" fill-opacity=".28"/><path d="M11 12 L17 12 L14 17 Z" fill="#3C5A8C"/></svg>Furniture: shaded band is the back, arrow points the way it faces</li>
+</ul>
+</div>
+<div class="card">
+<h2>Good to know</h2>
+<p class="hint">From the scan, the walkthrough and Amit.</p>
+<ul class="notes">
+<li>Ceilings are 9&prime;1&Prime; in the kitchen, hall and bath, and up to 9&prime;11&Prime; in the main room.</li>
+<li>Gas range and electric baseboard heat.</li>
+<li>Water and garbage are included. You pay gas, electric and internet.</li>
+<li>Internet: Amit suggests Sonic or Monkey Brains (a local provider).</li>
+<li>The roof deck is reached through the kitchen window. The landlord cleans the runoff once a year.</li>
+<li>The ironing board folds up into a built-in cupboard in the kitchen.</li>
+<li>Bins are downstairs. Trucks collect on the side street about twice a week.</li>
+<li>The fire escape screen has to come off to use it. No plants out there.</li>
+</ul>
+</div>
+</div>
+</div>
+<p class="foot">Walls, doors and windows come from the phone scan, so they should be good to a few inches. Still drawn by eye because the scans did not capture them: the depth of the bay, the range, fridge, heaters and bath fixtures.</p>
+</div>
 <script>
 (function () {
-  var NS = 'http://www.w3.org/2000/svg';
-  var svg = document.getElementById('plan');
-  var T = 0.35, H = T / 2;
-  var C = { hw: '#DEB070', plank: '#D6D2CC', deck: '#C9D6C5', tile: '#F1EEE8', fx: '#ECE8E0', fxLine: '#A29C92', wall: '#23232A', glass: '#5AA0D2', heat: '#CD463C', muted: '#6E6E76', ink: '#23232A' };
-
-  function f(n) { return +n.toFixed(3); }
-  function rect(x, y, w, h, attrs) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '" ' + (attrs || '') + '/>'; }
-  function text(x, y, str, size, o) {
-    o = o || {};
-    var lines = String(str).split('\n'), lh = size * 1.18, y0 = y - (lines.length - 1) * lh / 2;
-    var tr = o.rot ? ' transform="rotate(' + o.rot + ' ' + f(x) + ' ' + f(y) + ')"' : '';
-    var out = '<text x="' + f(x) + '" y="' + f(y0) + '" font-family="Inter, system-ui, sans-serif" font-size="' + size + '" font-weight="' + (o.w || 500) + '" fill="' + (o.fill || C.muted) + '" text-anchor="' + (o.anchor || 'middle') + '" dominant-baseline="central"' + (o.ls ? ' letter-spacing="' + o.ls + '"' : '') + (o.cls ? ' class="' + o.cls + '"' : '') + tr + '>';
-    lines.forEach(function (l, i) { out += '<tspan x="' + f(x) + '" dy="' + (i === 0 ? 0 : f(lh)) + '">' + l + '</tspan>'; });
-    return out + '</text>';
-  }
-  // wall segment as a filled rectangle; eS/eE extend the ends by half a wall so corners meet cleanly
-  function wall(a, b, c, d, eS, eE) {
-    eS = eS === undefined ? 1 : eS; eE = eE === undefined ? 1 : eE;
-    if (b === d) {
-      var s = Math.sign(c - a), x0 = a - (eS ? s * H : 0), x1 = c + (eE ? s * H : 0);
-      return rect(Math.min(x0, x1), b - H, Math.abs(x1 - x0), T);
-    }
-    var s2 = Math.sign(d - b), y0 = b - (eS ? s2 * H : 0), y1 = d + (eE ? s2 * H : 0);
-    return rect(a - H, Math.min(y0, y1), T, Math.abs(y1 - y0));
-  }
-  function fixture(x, y, w, h, label, o) {
-    o = o || {};
-    var s = rect(x, y, w, h, 'fill="' + (o.fill || C.fx) + '" stroke="' + C.fxLine + '" stroke-width="0.05" rx="0.04"');
-    if (label) s += text(x + w / 2, y + h / 2, label, o.size || 0.32, { w: 600, rot: o.rot });
-    return s;
-  }
-  function arc(hx, hy, r, sx, sy, ex, ey, sweep) {
-    var d = 'M' + hx + ' ' + hy + ' L' + sx + ' ' + sy + ' A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + ex + ' ' + ey + ' Z';
-    return '<path d="' + d + '" fill="rgba(110,110,118,.07)" stroke="#8A8A92" stroke-width="0.05" stroke-linejoin="round"/>';
-  }
-
-  // movable pieces: wrapped in a group with a transparent hit box so the whole footprint can be grabbed
-  var MV = {};
-  function mv(id, name, x, y, w, h, inner, built) {
-    MV[id] = { id: id, name: name, x: x, y: y, w: w, h: h, cx: x + w / 2, cy: y + h / 2, built: !!built, dx: 0, dy: 0, rot: 0 };
-    return '<g class="mv' + (built ? ' built' : '') + '" id="mv-' + id + '" data-mv="' + id + '">' + rect(x, y, w, h, 'fill="transparent"') + inner + '</g>';
-  }
-
-  var s = '';
-  s += '<defs>' +
-    '<pattern id="hw" width="1" height="0.55" patternUnits="userSpaceOnUse"><rect width="1" height="0.55" fill="' + C.hw + '"/><rect y="0.52" width="1" height="0.03" fill="#8A5A20" opacity=".16"/></pattern>' +
-    '<pattern id="pl" width="0.55" height="1" patternUnits="userSpaceOnUse"><rect width="0.55" height="1" fill="' + C.plank + '"/><rect x="0.52" width="0.03" height="1" fill="#6E6A60" opacity=".14"/></pattern>' +
-    '</defs>';
-  s += rect(-8.2, -3.6, 29, 35.8, 'fill="#FBFAF7"');
-
-  // outside: deck, fire escape, planter
-  s += rect(-7.5, 0, 7.325, 17, 'fill="' + C.deck + '"');
-  s += '<path d="M7.1 -1.8 H20.175 V-0.175 H8.4" fill="none" stroke="#8A8A92" stroke-width="0.05" stroke-dasharray="0.22 0.16"/>';
-  s += mv('planter', 'Planter', -1.3, 1.7, 1.1, 3.1, rect(-1.3, 1.7, 1.1, 3.1, 'fill="none" stroke="#8A8A92" stroke-width="0.05" stroke-dasharray="0.2 0.14"'));
-
-  // floors
-  s += rect(0, 0, 15, 14.5, 'fill="url(#hw)"');
-  s += rect(15, 0, 5, 6, 'fill="url(#hw)"');
-  s += rect(11.5, 14.5, 3.5, 11.55, 'fill="url(#hw)"');   // hall hardwood runs down to the bathroom door
-  s += rect(0, 14.5, 11.33, 13.4, 'fill="url(#pl)"');
-  s += rect(15, 11.7, 3.2, 2.8, 'fill="' + C.tile + '"');
-  s += rect(11.33, 26.05, 5.52, 4, 'fill="' + C.tile + '"');
-
-  // bay
-  var bay = '1.5,0 3,-1.8 7,-1.8 8.5,0';
-  s += '<polygon points="' + bay + '" fill="' + C.hw + '"/>';
-  s += '<polygon points="2.0,-0.1 3.3,-1.5 6.7,-1.5 8.0,-0.1" fill="#EFE6D6" stroke="#A69578" stroke-width="0.04"/>';
-
-  // kitchen and bath fixtures
-  s += mv('counterW', 'West counter', 0.2, 21.2, 2.2, 6.5, fixture(0.2, 21.2, 2.2, 6.5, ''), true);
-  s += mv('counterS', 'South counter', 2.6, 26.0, 8.55, 1.7, fixture(2.6, 26.0, 8.55, 1.7, ''), true);
-  s += mv('range', 'Range', 4.15, 26.2, 2.2, 1.2, fixture(4.15, 26.2, 2.2, 1.2, 'RANGE'), true);
-  s += mv('sink', 'Sink', 0.5, 22.95, 1.6, 2.2, fixture(0.5, 22.95, 1.6, 2.2, 'SINK', { fill: '#fff' }), true);
-  s += mv('fridge', 'Fridge', 9.05, 21.75, 2.1, 2.4, fixture(9.05, 21.75, 2.1, 2.4, 'FRIDGE'));
-  s += mv('cabinet', 'Cabinet', 10.05, 24.2, 1.1, 1.7, fixture(10.05, 24.2, 1.1, 1.7, ''), true);
-  s += mv('eatin', 'Eat-in area', 3, 17.2, 3, 4, rect(3, 17.2, 3, 4, 'fill="none" stroke="' + C.fxLine + '" stroke-width="0.05" stroke-dasharray="0.2 0.14"') + text(4.5, 19.2, 'eat-in', 0.34, { w: 400 }));
-  s += mv('breaker', 'Breaker panel', 16.9, 12.3, 0.7, 1.6, fixture(16.9, 12.3, 0.7, 1.6, '', { fill: '#FFE6B4' }), true);
-  s += mv('wc', 'Toilet', 11.45, 28.45, 1.4, 1.4, fixture(11.45, 28.45, 1.4, 1.4, 'WC', { fill: '#fff', size: 0.3 }), true);
-  s += mv('vanity', 'Vanity and mirror', 13.3, 28.7, 1.5, 1.22, fixture(13.5, 28.7, 1.1, 1.1, '', {}) + rect(13.3, 29.72, 1.5, 0.15, 'fill="#BBD8EA" stroke="' + C.fxLine + '" stroke-width="0.03"'), true);
-  s += mv('tub', 'Tub', 14.8, 26.3, 1.9, 3.55, fixture(14.8, 26.3, 1.9, 3.55, 'TUB', { fill: '#fff', size: 0.34, rot: 90 }), true);
-
-  // heaters
-  s += rect(0.2, 6.2, 0.2, 6.3, 'fill="' + C.heat + '"');
-  s += rect(0.2, 15.3, 0.2, 4.2, 'fill="' + C.heat + '"');
-  s += rect(14.6, 7, 0.2, 5.5, 'fill="' + C.heat + '"');
-
-  // bay walls and glass
-  s += '<polyline points="' + bay + '" fill="none" stroke="' + C.wall + '" stroke-width="' + T + '" stroke-linejoin="miter"/>';
-  s += '<polyline points="' + bay + '" fill="none" stroke="' + C.glass + '" stroke-width="0.17" stroke-linejoin="miter"/>';
-
-  // walls
-  var W = [
-    [0, 0, 1.5, 0], [8.5, 0, 20, 0], [15, 6, 20, 6], [0, 14.5, 2.2, 14.5, 1, 0], [6.8, 14.5, 11.33, 14.5, 0, 1],
-    [15, 11.7, 18.2, 11.7], [15, 14.5, 18.2, 14.5], [0, 27.9, 11.33, 27.9], [11.33, 30.05, 16.85, 30.05], [13.7, 26.05, 16.85, 26.05, 0, 1],
-    [0, 0, 0, 27.9], [20, 0, 20, 6], [15, 0, 15, 1.2, 1, 0], [15, 4.3, 15, 11.7, 0, 1], [18.2, 11.7, 18.2, 14.5],
-    [15, 14.5, 15, 23.6, 1, 0], [11.33, 14.5, 11.33, 18.75, 1, 0], [11.33, 21.6, 11.33, 30.05, 0, 1], [16.85, 26.05, 16.85, 30.05]
-  ];
-  s += '<g fill="' + C.wall + '">' + W.map(function (w) { return wall.apply(null, w); }).join('') + '</g>';
-
-  // windows
-  s += '<g fill="' + C.glass + '">' +
-    rect(-H, 1.3, T, 3.85) + rect(16, -H, 3, T) + rect(-H, 15.2, T, 4.3) + rect(-H, 22.1, T, 4.3) + rect(16.85 - H, 27.4, T, 1.4) + '</g>';
-
-  // doors: leaf plus swing
-  s += door(15, 26.05, 15, 23.6, 12.55, 26.05, 2.45, 0);   // entry door (black): in the east wall between the hall wall's end and the bathroom, hinged on the south jamb, swings inward
-  s += '<line x1="11.5" y1="26.05" x2="13.7" y2="26.05" stroke="#4A4A52" stroke-width="0.1"/>';
-  s += arc(11.5, 26.05, 2.2, 13.7, 26.05, 11.5, 28.25, 1);
-
-  // labels
-  s += text(7.5, 6.9, 'MAIN ROOM', 0.62, { w: 600, ls: 0.04 });
-  s += text(7.5, 7.7, '15 × 14.5 ft', 0.38, { w: 500, cls: 'dim' });
-  s += text(17.5, 3.0, 'WALK-IN\nCLOSET', 0.4, { w: 600 });
-  s += text(17.5, 4.1, '5 × 6 ft', 0.34, { w: 500, cls: 'dim' });
-  s += text(4.4, 15.85, 'KITCHEN', 0.46, { w: 600, ls: 0.03 });
-  s += text(4.4, 16.45, '11 × 13 ft', 0.34, { w: 500, cls: 'dim' });
-  s += text(13.25, 18.6, 'HALL', 0.42, { w: 600, ls: 0.03 });
-  s += text(13.25, 19.25, '3.5 × 11.5 ft', 0.32, { w: 500, cls: 'dim' });
-  s += text(15.95, 13.1, 'CLOSET', 0.3, { w: 600 });
-  s += text(14.25, 26.75, 'BATH', 0.36, { w: 600 });
-  s += text(14.25, 27.25, '5.5 × 4 ft', 0.28, { w: 500, cls: 'dim' });
-  s += text(14.05, 28.15, 'sink &\ncabinet', 0.26, { w: 500 });
-  s += text(16.3, 24.9, 'entry way', 0.34, { w: 500 });
-  s += text(-3.85, 8.0, 'PRIVATE\nROOF DECK', 0.46, { w: 600, ls: 0.03 });
-  s += text(-3.85, 9.5, 'reached through\nthe kitchen window', 0.3, { w: 400 });
-  s += text(-3.85, 11.3, '7.3 × 17 ft', 0.34, { w: 500, cls: 'dim' });
-  s += text(-0.5, 17.35, 'window', 0.32, { w: 500, anchor: 'end' });
-  s += text(-0.5, 24.25, 'window', 0.32, { w: 500, anchor: 'end' });
-  s += text(17.2, 28.0, 'tiny\nwindow', 0.28, { w: 500, anchor: 'start' });
-  s += text(5, -0.85, 'bay window', 0.34, { w: 500 });
-  s += text(14.2, -0.95, 'fire escape (screen must come off)', 0.34, { w: 500 });
-  s += text(20, -2.75, '↑  STREET', 0.5, { w: 600, fill: C.ink, anchor: 'end' });
-
-  // scale bar
-  s += rect(0, 31.2, 5, 0.12, 'fill="' + C.ink + '"');
-  s += text(5.35, 31.26, '5 ft', 0.38, { w: 500, anchor: 'start' });
-  s += text(20, 31.26, 'Top of the plan is the street (north)', 0.34, { w: 400, anchor: 'end' });
-
-  // optional doors: a closed leaf in the opening plus its swing
-  function door(hx, hy, cx, cy, ox, oy, r, sweep) {
-    return '<line x1="' + hx + '" y1="' + hy + '" x2="' + cx + '" y2="' + cy + '" stroke="#4A4A52" stroke-width="0.1"/>' + arc(hx, hy, r, cx, cy, ox, oy, sweep);
-  }
-  var DOORS = [
-    { id: 'closet', name: 'Closet door', note: 'It has one already. Swings out toward the hall.', on: true, svg: door(15, 14.5, 15, 11.7, 12.2, 14.5, 2.8, 0) },
-    { id: 'iron', name: 'Ironing board cupboard door', note: 'Flat in the wall when closed. On the kitchen east wall by the hall. Shown open, swinging left into the kitchen.', on: false, svg: door(11.33, 15.3, 11.33, 16.9, 9.73, 15.3, 1.6, 1) + text(10.45, 16.1, 'ironing\nboard', 0.24, { w: 500 }) },
-    { id: 'walkin', name: 'Walk-in closet door', note: 'Available, not on yet. Swings out into the main room, hinged on the right.', on: false, svg: door(15, 4.3, 15, 1.2, 11.9, 4.3, 3.1, 0) },
-    { id: 'kitchenHall', name: 'Kitchen door, hall side', note: 'Available, not on yet.', on: false, svg: door(11.33, 18.75, 11.33, 21.6, 8.48, 18.75, 2.85, 1) },
-    { id: 'kitchenMain', name: 'Kitchen doors, main room side', note: 'Available, not on yet. Drawn as a pair.', on: false, svg: door(2.2, 14.5, 4.5, 14.5, 2.2, 16.8, 2.3, 1) + door(6.8, 14.5, 4.5, 14.5, 6.8, 16.8, 2.3, 0) }
-  ];
-  try { var sd = JSON.parse(localStorage.getItem('floorplan-studio-doors') || 'null'); if (sd) DOORS.forEach(function (d) { if (d.id in sd) d.on = !!sd[d.id]; }); } catch (e) {}
-  s += '<g id="doorsLayer"></g>';
-  svg.innerHTML = s + '<g id="furn"></g><g id="hnd"></g>';
-  var doorsLayer = document.getElementById('doorsLayer');
-  function renderDoors() {
-    doorsLayer.innerHTML = DOORS.filter(function (d) { return d.on; }).map(function (d) { return d.svg; }).join('');
-    try { var o = {}; DOORS.forEach(function (d) { o[d.id] = d.on; }); localStorage.setItem('floorplan-studio-doors', JSON.stringify(o)); } catch (e) {}
-  }
-  var dl = document.getElementById('doorlist');
-  DOORS.forEach(function (d) {
-    var li = document.createElement('li');
-    li.innerHTML = '<label><input type="checkbox"' + (d.on ? ' checked' : '') + '><span>' + d.name + '<small>' + d.note + '</small></span></label>';
-    li.querySelector('input').addEventListener('change', function (e) { d.on = e.target.checked; renderDoors(); });
-    dl.appendChild(li);
-  });
-  renderDoors();
-  var furn = document.getElementById('furn'), hnd = document.getElementById('hnd');
-  var dimEls = svg.querySelectorAll('.dim');
-  function setDims(on) { dimEls.forEach(function (e) { e.style.display = on ? '' : 'none'; }); }
-  setDims(false);
-  document.getElementById('dims').addEventListener('change', function (e) { setDims(e.target.checked); });
-
-  // ---------- furniture ----------
-  var K = '#3C5A8C', G = '#3C7A4A';
-  var KINDS = [
-    { id: 'bed', name: 'Bed', w: 5, h: 6.7, fill: '#E8F0FC' },
-    { id: 'dresser', name: 'Dresser', w: 3, h: 1.5, fill: '#fff' },
-    { id: 'vanity', name: 'Vanity table', w: 2.5, h: 1.3, fill: '#fff' },
-    { id: 'bedside', name: 'Bedside table', w: 1.5, h: 1.5, fill: '#fff' },
-    { id: 'dining', name: 'Dining table', w: 10, h: 3.5, fill: '#fff' },
-    { id: 'sofa', name: 'Couch', w: 7, h: 3, fill: '#fff' },
-    { id: 'love', name: 'Love seat', w: 5, h: 3, fill: '#fff' },
-    { id: 'recliner', name: 'Recliner', w: 3, h: 3, fill: '#fff' },
-    { id: 'ottoman', name: 'Ottoman', w: 3, h: 2, fill: '#fff' },
-    { id: 'desk', name: 'Work desk', w: 4.5, h: 2.25, fill: '#fff' },
-    { id: 'dchair', name: 'Work chair', w: 2, h: 2, fill: '#fff' },
-    { id: 'shelf', name: 'Shelf', w: 3, h: 1, fill: '#fff' },
-    { id: 'lamp', name: 'Cascade lamp', w: 1.5, h: 1.5, fill: '#FFF4D2', round: true },
-    { id: 'plant', name: 'Big plant', w: 1.5, h: 1.5, fill: '#D5EBD5', stroke: G, round: true },
-    { id: 'pchair', name: 'Patio chair', w: 2.25, h: 2.25, fill: '#fff', deck: true }
-  ];
-  var kindById = {}; KINDS.forEach(function (k) { kindById[k.id] = k; });
-  var items = [], selected = null, selMv = null, uid = 1, dragging = null;
-
-  try { var saved = JSON.parse(localStorage.getItem('floorplan-studio-furniture') || 'null'); if (saved && saved.items) { items = saved.items.filter(function (i) { return kindById[i.kind]; }); uid = saved.uid || items.length + 1; } } catch (e) {}
-  try { var sm = JSON.parse(localStorage.getItem('floorplan-studio-moved') || 'null'); if (sm) Object.keys(sm).forEach(function (id) { if (MV[id]) { MV[id].dx = +sm[id].dx || 0; MV[id].dy = +sm[id].dy || 0; MV[id].rot = +sm[id].rot || 0; } }); } catch (e) {}
-  function persistMv() { var o = {}; Object.keys(MV).forEach(function (id) { var m = MV[id]; if (m.dx || m.dy || m.rot) o[id] = { dx: m.dx, dy: m.dy, rot: m.rot }; }); try { localStorage.setItem('floorplan-studio-moved', JSON.stringify(o)); } catch (e) {} }
-  function mvTransform(m) { return 'translate(' + f(m.dx) + ' ' + f(m.dy) + ') rotate(' + m.rot + ' ' + f(m.cx) + ' ' + f(m.cy) + ')'; }
-  function renderMv() {
-    Object.keys(MV).forEach(function (id) {
-      var m = MV[id], g = document.getElementById('mv-' + id);
-      g.setAttribute('transform', mvTransform(m));
-      var old = g.querySelector('.selbox'); if (old) g.removeChild(old);
-      if (selMv === id) {
-        var r = document.createElementNS(NS, 'rect');
-        r.setAttribute('class', 'selbox');
-        r.setAttribute('x', m.x - 0.08); r.setAttribute('y', m.y - 0.08); r.setAttribute('width', m.w + 0.16); r.setAttribute('height', m.h + 0.16);
-        r.setAttribute('fill', 'none'); r.setAttribute('stroke', '#2F7D5B'); r.setAttribute('stroke-width', '0.09'); r.setAttribute('stroke-dasharray', '0.25 0.15'); r.setAttribute('rx', '0.1');
-        g.appendChild(r);
-      }
-    });
-  }
-  function persist() { try { localStorage.setItem('floorplan-studio-furniture', JSON.stringify({ items: items, uid: uid })); } catch (e) {} }
-  function snap(v) { return Math.round(v * 4) / 4; }
-
-  // on-canvas handles for the selected piece: a rotate handle above it, and a resize dot on added furniture
-  function drawHandles() {
-    var cx, cy, rot, w, h, size = false;
-    if (selected !== null) {
-      var it = items.filter(function (i) { return i.uid === selected; })[0]; if (!it) { hnd.innerHTML = ''; return; }
-      var k = kindById[it.kind]; cx = it.x; cy = it.y; rot = it.rot; w = it.w || k.w; h = it.h || k.h; size = true;
-    } else if (selMv !== null) {
-      var m = MV[selMv]; cx = m.cx + m.dx; cy = m.cy + m.dy; rot = m.rot; w = m.w; h = m.h;
-    } else { hnd.innerHTML = ''; return; }
-    var a = rot * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
-    function P(lx, ly) { return [cx + lx * ca - ly * sa, cy + lx * sa + ly * ca]; }
-    var ppf = (svg.getBoundingClientRect().width / 29) || 24;   // screen pixels per foot, so handles stay finger-sized
-    var R = Math.max(0.55, 13 / ppf), RS = Math.max(0.42, 10 / ppf), k = R / 0.55;
-    var top = P(0, -h / 2), rp = P(0, -h / 2 - Math.max(1.0, 28 / ppf)), out = '';
-    out += '<line x1="' + f(top[0]) + '" y1="' + f(top[1]) + '" x2="' + f(rp[0]) + '" y2="' + f(rp[1]) + '" stroke="#2F7D5B" stroke-width="' + f(0.07 * k) + '"/>';
-    out += '<g class="handle" data-h="rot" style="cursor:grab;touch-action:none"><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="' + f(Math.max(R, 22 / ppf)) + '" fill="transparent"/><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="' + f(R) + '" fill="#fff" stroke="#2F7D5B" stroke-width="' + f(0.09 * k) + '"/>' +
-      '<text x="' + f(rp[0]) + '" y="' + f(rp[1] + 0.03 * k) + '" font-size="' + f(0.72 * k) + '" font-family="Inter, system-ui, sans-serif" font-weight="700" fill="#2F7D5B" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">\u21BB</text></g>';
-    if (size) {
-      var cp = P(w / 2, h / 2);
-      out += '<g class="handle" data-h="size" style="cursor:nwse-resize;touch-action:none"><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="' + f(Math.max(RS, 15 / ppf)) + '" fill="transparent"/><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="' + f(RS) + '" fill="#2F7D5B" stroke="#fff" stroke-width="' + f(0.08 * (RS / 0.42)) + '"/></g>';
-    }
-    hnd.innerHTML = out;
-  }
-  function render() {
-    var out = '';
-    items.forEach(function (it) {
-      var k = kindById[it.kind], sel = it.uid === selected, w = it.w || k.w, h = it.h || k.h, col = k.stroke || K;
-      var label = '';
-      if (h >= 1 && w >= 1.2) {
-        var lines = k.name.toUpperCase().split(' '); if (lines.length > 1 && w > 4) lines = [lines.join(' ')];
-        var longest = Math.max.apply(null, lines.map(function (l) { return l.length; }));
-        var fs = Math.min(0.34, (w * 0.9) / (longest * 0.66), h / 4.2);
-        label = lines.concat([w + ' \u00d7 ' + h + ' ft']).join('\n');
-        label = text(0, 0, label, fs, { w: 600, fill: col, rot: it.rot ? -it.rot : 0 });
-      }
-      out += '<g class="item" data-uid="' + it.uid + '" transform="translate(' + f(it.x) + ' ' + f(it.y) + ') rotate(' + it.rot + ')" style="cursor:grab;touch-action:none">' +
-        rect(-w / 2, -h / 2, w, h, 'fill="' + k.fill + '" fill-opacity=".92" stroke="' + (sel ? '#2F7D5B' : col) + '" stroke-width="' + (sel ? 0.1 : 0.06) + '" rx="' + (k.round ? f(Math.min(w, h) / 2) : 0.1) + '"') + label + '</g>';
-    });
-    furn.innerHTML = out;
-    drawHandles();
-    var any = selected !== null || selMv !== null;
-    document.getElementById('rot').disabled = !any;
-    document.getElementById('reshuf').disabled = !items.length;
-    var del = document.getElementById('del');
-    del.disabled = !any; del.textContent = selMv !== null ? 'Put back' : 'Remove';
-    var si = selected !== null ? items.filter(function (i) { return i.uid === selected; })[0] : null;
-    var wi = document.getElementById('sw'), hi = document.getElementById('sh');
-    wi.disabled = hi.disabled = !si;
-    if (si) { var kk = kindById[si.kind]; if (document.activeElement !== wi) wi.value = si.w || kk.w; if (document.activeElement !== hi) hi.value = si.h || kk.h; } else { wi.value = hi.value = ''; }
-    renderMv();
-  }
-  function add(id) {
-    var k = kindById[id], n = items.length % 6;
-    var it = k.deck ? { uid: uid++, kind: id, x: snap(-4.5 + (items.length % 2) * 2.5), y: snap(12 + (items.length % 3)), rot: 0 } : { uid: uid++, kind: id, x: snap(7.5 + n * 0.5), y: snap(7.2 + n * 0.5), rot: 0 };
-    items.push(it); selected = it.uid; persist(); render();
-  }
-  function svgPoint(ev) {
-    var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-  }
-  svg.addEventListener('pointerdown', function (ev) {
-    var hh = ev.target.closest && ev.target.closest('.handle');
-    if (hh && (selected !== null || selMv !== null)) {
-      var tgt = selected !== null ? items.filter(function (i) { return i.uid === selected; })[0] : MV[selMv];
-      dragging = { handle: hh.getAttribute('data-h'), tgt: tgt, isMv: selected === null, p0: svgPoint(ev), moved: false };
-      try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
-      ev.preventDefault(); return;
-    }
-    var g = ev.target.closest && ev.target.closest('.item');
-    var gm = !g && ev.target.closest && ev.target.closest('.mv');
-    if (!g && !gm) { if (selected !== null || selMv !== null) { selected = null; selMv = null; render(); } return; }
-    var p = svgPoint(ev);
-    if (gm) {
-      var m = MV[gm.getAttribute('data-mv')];
-      selMv = m.id; selected = null;
-      dragging = { mv: m, px: p.x, py: p.y, dx0: m.dx, dy0: m.dy };
-    } else {
-      var it = items.filter(function (i) { return i.uid === +g.getAttribute('data-uid'); })[0];
-      selected = it.uid; selMv = null;
-      items = items.filter(function (i) { return i !== it; }); items.push(it);   // bring to front
-      dragging = { it: it, dx: it.x - p.x, dy: it.y - p.y };
-    }
-    render();
-    try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
-    ev.preventDefault();
-  });
-  svg.addEventListener('pointermove', function (ev) {
-    if (!dragging) return;
-    var p = svgPoint(ev);
-    if (dragging.handle) {
-      var t = dragging.tgt, cx = dragging.isMv ? t.cx + t.dx : t.x, cy = dragging.isMv ? t.cy + t.dy : t.y;
-      if (!dragging.moved && Math.hypot(p.x - dragging.p0.x, p.y - dragging.p0.y) > 0.25) dragging.moved = true;
-      if (!dragging.moved) return;
-      if (dragging.handle === 'rot') {
-        var ang = Math.atan2(p.y - cy, p.x - cx) * 180 / Math.PI + 90;
-        t.rot = ((Math.round(ang / 15) * 15) % 360 + 360) % 360;
-      } else {
-        var a = t.rot * Math.PI / 180, dx = p.x - cx, dy = p.y - cy;
-        t.w = Math.max(0.25, snap(2 * Math.abs(dx * Math.cos(a) + dy * Math.sin(a))));
-        t.h = Math.max(0.25, snap(2 * Math.abs(-dx * Math.sin(a) + dy * Math.cos(a))));
-      }
-      render(); return;
-    }
-    if (dragging.mv) {
-      dragging.mv.dx = snap(dragging.dx0 + p.x - dragging.px); dragging.mv.dy = snap(dragging.dy0 + p.y - dragging.py);
-      document.getElementById('mv-' + dragging.mv.id).setAttribute('transform', mvTransform(dragging.mv));
-      drawHandles();
-      return;
-    }
-    dragging.it.x = snap(p.x + dragging.dx); dragging.it.y = snap(p.y + dragging.dy);
-    var g = furn.querySelector('[data-uid="' + dragging.it.uid + '"]');
-    if (g) g.setAttribute('transform', 'translate(' + f(dragging.it.x) + ' ' + f(dragging.it.y) + ') rotate(' + dragging.it.rot + ')');
-    drawHandles();
-  });
-  function endDrag() {
-    if (!dragging) return;
-    if (dragging.handle === 'rot' && !dragging.moved) { dragging.tgt.rot = (dragging.tgt.rot + 90) % 360; }
-    dragging = null; persist(); persistMv(); render();
-  }
-  svg.addEventListener('pointerup', endDrag);
-  svg.addEventListener('pointercancel', endDrag);
-
-  function rotateSel() { if (selMv !== null) { var m = MV[selMv]; m.rot = (m.rot + 90) % 360; persistMv(); render(); return; } var it = items.filter(function (i) { return i.uid === selected; })[0]; if (it) { it.rot = (it.rot + 90) % 360; persist(); render(); } }
-  function removeSel() { if (selMv !== null) { var m = MV[selMv]; m.dx = m.dy = m.rot = 0; persistMv(); render(); return; } items = items.filter(function (i) { return i.uid !== selected; }); selected = null; persist(); render(); }
-  document.getElementById('rot').addEventListener('click', rotateSel);
-  document.getElementById('del').addEventListener('click', removeSel);
-  document.getElementById('clr').addEventListener('click', function () { items = []; selected = null; persist(); render(); });
-  document.addEventListener('keydown', function (ev) {
-    if ((selected === null && selMv === null) || /input|textarea/i.test(ev.target.tagName)) return;
-    var it = selMv !== null ? MV[selMv] : items.filter(function (i) { return i.uid === selected; })[0]; if (!it) return;
-    var isMv = selMv !== null, kx = isMv ? 'dx' : 'x', ky = isMv ? 'dy' : 'y';
-    if (ev.key === 'r' || ev.key === 'R') { rotateSel(); ev.preventDefault(); }
-    else if (ev.key === 'Delete' || ev.key === 'Backspace') { removeSel(); ev.preventDefault(); }
-    else if (ev.key.indexOf('Arrow') === 0) {
-      if (ev.key === 'ArrowLeft') it[kx] -= 0.25; if (ev.key === 'ArrowRight') it[kx] += 0.25;
-      if (ev.key === 'ArrowUp') it[ky] -= 0.25; if (ev.key === 'ArrowDown') it[ky] += 0.25;
-      persist(); persistMv(); render(); ev.preventDefault();
-    }
-  });
-
-  function setSize() {
-    var it = items.filter(function (i) { return i.uid === selected; })[0]; if (!it) return;
-    var w = parseFloat(document.getElementById('sw').value), h = parseFloat(document.getElementById('sh').value);
-    if (w >= 0.25) it.w = Math.round(w * 4) / 4; if (h >= 0.25) it.h = Math.round(h * 4) / 4;
-    persist(); render();
-  }
-  document.getElementById('sw').addEventListener('input', setSize);
-  document.getElementById('sh').addEventListener('input', setSize);
-  // suggested starting layout: [kind, x, y, rotation]
-  var LAYOUT = [
-    ['bed', 11.5, 3.9, 0], ['bedside', 8.1, 1.3, 0], ['dresser', 13, 8.0, 0],
-    ['desk', 4.5, 1.65, 0], ['dchair', 4.5, 3.6, 0], ['vanity', 1.15, 5.5, 90],
-    ['sofa', 1.95, 10.3, 90], ['ottoman', 5.1, 10.3, 90], ['love', 8.2, 10.5, 90], ['love', 6, 6.3, 0],
-    ['recliner', 12.3, 11.0, 0], ['shelf', 9.4, 13.8, 0], ['lamp', 6, 13.4, 0],
-    ['plant', 3.6, -0.8, 0], ['plant', 6.4, -0.8, 0],
-    ['dining', 5.5, 20.5, 90],
-    ['pchair', -4.5, 12, 0], ['pchair', -2, 13, 0]
-  ];
-  var undoItems = null;
-  document.getElementById('sug').addEventListener('click', function () {
-    undoItems = { items: items, uid: uid };
-    items = LAYOUT.map(function (l) { return { uid: uid++, kind: l[0], x: l[1], y: l[2], rot: l[3] }; });
-    selected = null; persist(); render();
-    document.getElementById('und').disabled = false;
-  });
-  document.getElementById('und').addEventListener('click', function () {
-    if (!undoItems) return;
-    items = undoItems.items; uid = Math.max(uid, undoItems.uid); undoItems = null; selected = null; persist(); render();
-    document.getElementById('und').disabled = true;
-  });
-  document.getElementById('rst').addEventListener('click', function () { Object.keys(MV).forEach(function (id) { MV[id].dx = MV[id].dy = MV[id].rot = 0; }); selMv = null; persistMv(); render(); });
-  document.getElementById('unlock').addEventListener('change', function (e) { svg.classList.toggle('unlocked', e.target.checked); if (!e.target.checked && selMv !== null && MV[selMv].built) { selMv = null; render(); } });
-  var tray = document.getElementById('tray');
-  KINDS.forEach(function (k) {
-    var b = document.createElement('button');
-    b.className = 'piece'; b.type = 'button';
-    var scale = Math.min(7, 96 / Math.max(k.w, 1));   // px per ft in the little preview
-    b.innerHTML = '<i data-k="' + k.id + '" style="width:' + Math.max(8, k.w * scale) + 'px;height:' + Math.max(5, k.h * scale) + 'px;background:' + k.fill + (k.round ? ';border-radius:50%' : '') + (k.stroke ? ';border-color:' + k.stroke : '') + '"></i><div><b>' + k.name + '</b><span>' + k.w + ' × ' + k.h + ' ft</span></div>';
-    b.addEventListener('click', function () { add(k.id); });
-    tray.appendChild(b);
-  });
-
-  // ---- layouts: save, load, export, import, picture, reset ----
-  var SAVES_KEY = 'floorplan-studio-saves';
-  var DEFAULT_DOORS = { closet: true };
-  var doorBoxes = dl.querySelectorAll('input');
-  function saveDoorsOnly() { renderDoors(); }
-  function snapshot() {
-    var mv = {}; Object.keys(MV).forEach(function (id) { var m = MV[id]; if (m.dx || m.dy || m.rot) mv[id] = { dx: m.dx, dy: m.dy, rot: m.rot }; });
-    var dr = {}; DOORS.forEach(function (d) { dr[d.id] = d.on; });
-    return { app: 'floor-plan', v: 1, items: JSON.parse(JSON.stringify(items)), moved: mv, doors: dr };
-  }
-  function num(v, d) { v = +v; return isFinite(v) ? v : d; }
-  function applySnapshot(sn) {
-    var src = (sn && sn.items) || [];
-    items = src.filter(function (i) { return i && kindById[i.kind]; }).map(function (i, n) {
-      var o = { uid: n + 1, kind: i.kind, x: num(i.x, 7.5), y: num(i.y, 7.5), rot: ((num(i.rot, 0) % 360) + 360) % 360 };
-      if (num(i.w, 0) >= 0.25) o.w = i.w * 1; if (num(i.h, 0) >= 0.25) o.h = i.h * 1;
-      return o;
-    });
-    uid = items.length + 1;
-    var mvs = (sn && sn.moved) || {};
-    Object.keys(MV).forEach(function (id) { var o = mvs[id]; MV[id].dx = o ? num(o.dx, 0) : 0; MV[id].dy = o ? num(o.dy, 0) : 0; MV[id].rot = o ? num(o.rot, 0) : 0; });
-    var dr = (sn && sn.doors) || DEFAULT_DOORS;
-    DOORS.forEach(function (d, n) { d.on = !!dr[d.id]; doorBoxes[n].checked = d.on; });
-    selected = null; selMv = null; undoItems = null; document.getElementById('und').disabled = true;
-    persist(); persistMv(); renderDoors(); render();
-  }
-  function readSaves() { try { var a = JSON.parse(localStorage.getItem(SAVES_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
-  function writeSaves(a) { try { localStorage.setItem(SAVES_KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
-  var lmsg = document.getElementById('lmsg'), lname = document.getElementById('lname'), savelist = document.getElementById('savelist');
-  function say(t) { lmsg.textContent = t; }
-  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function renderSaves() {
-    var a = readSaves();
-    if (!a.length) { savelist.innerHTML = '<li class="empty">Nothing saved yet.</li>'; return; }
-    savelist.innerHTML = a.map(function (x, n) {
-      return '<li><span>' + esc(x.name) + '<small>' + (x.data.items || []).length + ' pieces</small></span><button class="btn" data-load="' + n + '">Load</button><button class="btn" data-del="' + n + '">Delete</button></li>';
-    }).join('');
-  }
-  savelist.addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
-    var a = readSaves();
-    if (b.hasAttribute('data-load')) { var x = a[+b.getAttribute('data-load')]; if (x) { applySnapshot(x.data); say('Loaded “' + x.name + '”.'); } }
-    else if (b.hasAttribute('data-del')) { var y = a[+b.getAttribute('data-del')]; if (y && confirm('Delete the saved layout “' + y.name + '”?')) { a.splice(+b.getAttribute('data-del'), 1); writeSaves(a); renderSaves(); say('Deleted.'); } }
-  });
-  function doSave() {
-    var name = lname.value.trim() || ('Layout ' + (readSaves().length + 1));
-    var a = readSaves(), i = a.findIndex(function (x) { return x.name.toLowerCase() === name.toLowerCase(); });
-    if (i >= 0 && !confirm('Replace the saved layout “' + a[i].name + '”?')) return;
-    var rec = { name: name, at: Date.now(), data: snapshot() };
-    if (i >= 0) a[i] = rec; else a.push(rec);
-    if (writeSaves(a)) { renderSaves(); lname.value = ''; say('Saved “' + name + '”.'); } else say('Could not save: browser storage is full or blocked. Try Export file instead.');
-  }
-  document.getElementById('lsave').addEventListener('click', doSave);
-  lname.addEventListener('keydown', function (e) { if (e.key === 'Enter') doSave(); });
-  function download(blob, fname) { var u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = fname; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 2000); }
-  function slug() { return (lname.value.trim() || 'layout').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'layout'; }
-  document.getElementById('lexp').addEventListener('click', function () {
-    download(new Blob([JSON.stringify(snapshot(), null, 2)], { type: 'application/json' }), 'floor-plan-' + slug() + '.json');
-    say('Exported. Open it later with Import file.');
-  });
-  var lfile = document.getElementById('lfile');
-  document.getElementById('limp').addEventListener('click', function () { lfile.value = ''; lfile.click(); });
-  lfile.addEventListener('change', function () {
-    var fl = lfile.files && lfile.files[0]; if (!fl) return;
-    var rd = new FileReader();
-    rd.onload = function () {
-      try {
-        var sn = JSON.parse(rd.result);
-        if (!sn || !Array.isArray(sn.items)) throw new Error('bad');
-        applySnapshot(sn); say('Imported ' + items.length + ' pieces from ' + fl.name + '.');
-      } catch (e) { say('That file is not a floor plan layout.'); }
-    };
-    rd.readAsText(fl);
-  });
-  document.getElementById('lreset').addEventListener('click', function () {
-    if (!confirm('Reset everything? This clears your furniture, moved items and door choices. Saved layouts are kept.')) return;
-    applySnapshot({ items: [], moved: {}, doors: DEFAULT_DOORS });
-    var u = document.getElementById('unlock'); u.checked = false; svg.classList.remove('unlocked');
-    say('Reset. Your saved layouts are still here.');
-  });
-  // picture: serialize the plan with its styles inlined and draw it to a PNG
-  function planPng(done) {
-    var clone = svg.cloneNode(true);
-    var h = clone.querySelector('#hnd'); if (h) h.innerHTML = '';
-    [].forEach.call(clone.querySelectorAll('.selbox'), function (n) { n.remove(); });
-    var src = svg.querySelectorAll('*'), dst = clone.querySelectorAll('*'), props = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'opacity', 'font-family', 'font-size', 'font-weight', 'letter-spacing', 'text-anchor', 'display'];
-    // clone has the same node order; the handle layer was emptied, so walk only until sizes diverge
-    var n = Math.min(src.length, dst.length);
-    for (var i = 0; i < n; i++) { if (src[i].tagName !== dst[i].tagName) break; var cs = getComputedStyle(src[i]); props.forEach(function (p) { dst[i].style.setProperty(p, cs.getPropertyValue(p)); }); }
-    var vb = svg.viewBox.baseVal, k = 50, W = Math.round(vb.width * k), H = Math.round(vb.height * k);
-    clone.setAttribute('xmlns', NS); clone.setAttribute('width', W); clone.setAttribute('height', H);
-    var bg = document.createElementNS(NS, 'rect'); bg.setAttribute('x', vb.x); bg.setAttribute('y', vb.y); bg.setAttribute('width', vb.width); bg.setAttribute('height', vb.height); bg.setAttribute('fill', getComputedStyle(svg).getPropertyValue('--p-bg').trim() || '#FBFAF7');
-    clone.insertBefore(bg, clone.firstChild);
-    var img = new Image();
-    img.onload = function () {
-      var c = document.createElement('canvas'); c.width = W; c.height = H;
-      c.getContext('2d').drawImage(img, 0, 0, W, H);
-      c.toBlob(function (b) { done(b, W, H); }, 'image/png');
-    };
-    img.onerror = function () { done(null); };
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
-  }
-  window.__planPng = planPng;
-  document.getElementById('limg').addEventListener('click', function () {
-    planPng(function (b) { if (b) { download(b, 'floor-plan-' + slug() + '.png'); say('Picture downloaded.'); } else say('Could not make the picture in this browser.'); });
-  });
-
-  // ---- I'm feeling lucky: shuffle the furniture into a random layout that fits ----
-  var LUCKY = { main: [0.4, 0.4, 14.6, 14.1], kitchen: [2.8, 15.0, 8.3, 25.3], deck: [-7.4, 0.6, -0.6, 13.4], hall: [11.7, 15.0, 14.7, 23.0] };
-  var DOOR_RECTS = { closet: [12.2, 11.7, 15, 14.5], iron: [9.73, 15.3, 11.33, 16.9], walkin: [11.9, 1.2, 15, 4.3], kitchenHall: [8.48, 18.75, 11.33, 21.6], kitchenMain: [2.2, 14.5, 6.8, 16.8] };
-  function keepClear() {
-    var r = [[2.2, 12.4, 6.8, 14.5], [12.5, 1.2, 15, 4.3]];   // kitchen doorway and walk-in opening
-    DOORS.forEach(function (d) { if (d.on && DOOR_RECTS[d.id]) r.push(DOOR_RECTS[d.id]); });
-    return r;
-  }
-  function boxHit(a, b, m) { return a[0] - m < b[2] && a[2] + m > b[0] && a[1] - m < b[3] && a[3] + m > b[1]; }
-  function luckyOnce(src, clear) {
-    var ex = keepClear(), placed = [], boxes = [], missed = [];
-    var order = src.map(function (it) { var k = kindById[it.kind]; return { it: it, w: it.w || k.w, h: it.h || k.h, k: k }; })
-      .sort(function (a, b) { return b.w * b.h - a.w * a.h; });
-    order.forEach(function (o) {
-      var zones = o.k.deck ? ['deck'] : (o.k.id === 'dining' ? (Math.random() < 0.6 ? ['kitchen', 'main'] : ['main', 'kitchen']) : ['main', 'kitchen', 'hall']);
-      for (var zi = 0; zi < zones.length; zi++) {
-        var z = LUCKY[zones[zi]];
-        for (var t = 0; t < 500; t++) {
-          var rot = [0, 90, 180, 270][Math.floor(Math.random() * 4)], sw = rot % 180 ? o.h : o.w, sh = rot % 180 ? o.w : o.h;
-          if (z[2] - z[0] < sw || z[3] - z[1] < sh) continue;
-          var cx = z[0] + sw / 2 + Math.random() * (z[2] - z[0] - sw), cy = z[1] + sh / 2 + Math.random() * (z[3] - z[1] - sh);
-          if (Math.random() < 0.7) {   // pull toward the nearest wall so it looks intentional
-            var dl = cx - sw / 2 - z[0], dr = z[2] - cx - sw / 2, dt = cy - sh / 2 - z[1], db = z[3] - cy - sh / 2, m = Math.min(dl, dr, dt, db);
-            if (m < 3.5) { if (m === dl) cx = z[0] + sw / 2; else if (m === dr) cx = z[2] - sw / 2; else if (m === dt) cy = z[1] + sh / 2; else cy = z[3] - sh / 2; }
-          }
-          cx = Math.min(z[2] - sw / 2, Math.max(z[0] + sw / 2, snap(cx))); cy = Math.min(z[3] - sh / 2, Math.max(z[1] + sh / 2, snap(cy)));
-          var box = [cx - sw / 2, cy - sh / 2, cx + sw / 2, cy + sh / 2], bad = false;
-          for (var i = 0; i < ex.length && !bad; i++) if (boxHit(box, ex[i], 0.05)) bad = true;
-          for (var j = 0; j < boxes.length && !bad; j++) if (boxHit(box, boxes[j], clear)) bad = true;
-          if (bad) continue;
-          boxes.push(box);
-          var n = { uid: 0, kind: o.it.kind, x: cx, y: cy, rot: rot };
-          if (o.it.w) n.w = o.it.w; if (o.it.h) n.h = o.it.h;
-          placed.push(n); return;
-        }
-      }
-      missed.push(o);
-    });
-    return { placed: placed, missed: missed };
-  }
-  function luckyShuffle(src) {
-    var best = null, steps = [0.6, 0.6, 0.45, 0.45, 0.3, 0.3, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1];
-    for (var tries = 0; tries < steps.length; tries++) {
-      var r = luckyOnce(src, steps[tries]);
-      if (!best || r.missed.length < best.missed.length) best = r;
-      if (!r.missed.length) break;
-    }
-    return best;
-  }
-  function luckyRun(useCurrent) {
-    var base = useCurrent && items.length ? items : LAYOUT.map(function (l) { return { uid: 0, kind: l[0], rot: 0 }; });
-    undoItems = { items: items, uid: uid };
-    var res = luckyShuffle(base), left = [];
-    res.missed.forEach(function (o) {   // never lose a piece: one that will not fit stays where it was
-      if (o.it.x !== undefined) { var c = { uid: 0, kind: o.it.kind, x: o.it.x, y: o.it.y, rot: o.it.rot }; if (o.it.w) c.w = o.it.w; if (o.it.h) c.h = o.it.h; res.placed.push(c); }
-      left.push(o.k.name);
-    });
-    items = res.placed.map(function (it, n) { it.uid = n + 1; return it; }); uid = items.length + 1;
-    selected = null; persist(); render();
-    document.getElementById('und').disabled = false;
-    say(left.length ? 'No room for: ' + left.join(', ') + '. Press again for another try.' : (useCurrent ? 'Reshuffled what was on the plan.' : 'Shuffled everything in.') + ' Press again for another, or Undo layout to go back.');
-  }
-  document.getElementById('lucky').addEventListener('click', function () { luckyRun(false); });
-  document.getElementById('reshuf').addEventListener('click', function () { luckyRun(true); });
-  // phones and tablets: zoom the plan (pan by dragging empty space) and keep handles sized to the screen
-  var zoomSteps = [1, 1.6, 2.4], zoomAt = 0, planWrap = svg.parentNode;
-  function setZoom(n) {
-    n = Math.max(0, Math.min(zoomSteps.length - 1, n));
-    var cxr = planWrap.scrollWidth ? (planWrap.scrollLeft + planWrap.clientWidth / 2) / planWrap.scrollWidth : 0.5;
-    zoomAt = n; svg.style.width = n ? (zoomSteps[n] * 100) + '%' : '';
-    planWrap.scrollLeft = cxr * planWrap.scrollWidth - planWrap.clientWidth / 2;
-    document.getElementById('zoomlbl').textContent = n ? 'Zoom ' + zoomSteps[n] + '\u00d7' : 'Fit to screen';
-    document.getElementById('zin').disabled = n === zoomSteps.length - 1; document.getElementById('zout').disabled = n === 0;
-    drawHandles();
-  }
-  document.getElementById('zin').addEventListener('click', function () { setZoom(zoomAt + 1); });
-  document.getElementById('zout').addEventListener('click', function () { setZoom(zoomAt - 1); });
-  setZoom(0);
-  var lastW = svg.getBoundingClientRect().width;
-  if (window.ResizeObserver) new ResizeObserver(function () { var w = svg.getBoundingClientRect().width; if (Math.abs(w - lastW) > 1) { lastW = w; drawHandles(); } }).observe(svg);
-  var wide = window.matchMedia('(min-width: 981px)');
-  function onWide() { if (wide.matches && zoomAt) setZoom(0); }
-  if (wide.addEventListener) wide.addEventListener('change', onWide);
-  var how = document.querySelector('details.how');
-  if (how && window.matchMedia('(max-width: 600px)').matches) how.removeAttribute('open');
-  // dark mode: the early script in <head> sets data-theme; this button flips it and remembers the choice
-  var themeBtn = document.getElementById('theme'), themeMeta = document.querySelector('meta[name="theme-color"]');
-  function paintTheme() {
-    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-    themeBtn.title = dark ? 'Light mode' : 'Dark mode';
-    if (themeMeta) themeMeta.setAttribute('content', dark ? '#131418' : '#F7F6F2');
-  }
-  themeBtn.addEventListener('click', function () {
-    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('floorplan-studio-theme', next); } catch (e) {}
-    paintTheme();
-  });
-  paintTheme();
-  renderSaves();
-  render();
+var NS = 'http://www.w3.org/2000/svg';
+var svg = document.getElementById('plan');
+var T = 0.35, H = T / 2;
+var C = { hw: '#DEB070', plank: '#D6D2CC', deck: '#C9D6C5', tile: '#F1EEE8', fx: '#ECE8E0', fxLine: '#A29C92', wall: '#23232A', glass: '#5AA0D2', heat: '#CD463C', muted: '#6E6E76', ink: '#23232A' };
+function f(n) { return +n.toFixed(3); }
+function rect(x, y, w, h, attrs) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(w) + '" height="' + f(h) + '" ' + (attrs || '') + '/>'; }
+function text(x, y, str, size, o) {
+o = o || {};
+var lines = String(str).split('\n'), lh = size * 1.18, y0 = y - (lines.length - 1) * lh / 2;
+var tr = o.rot ? ' transform="rotate(' + o.rot + ' ' + f(x) + ' ' + f(y) + ')"' : '';
+var out = '<text x="' + f(x) + '" y="' + f(y0) + '" font-family="Inter, system-ui, sans-serif" font-size="' + size + '" font-weight="' + (o.w || 500) + '" fill="' + (o.fill || C.muted) + '" text-anchor="' + (o.anchor || 'middle') + '" dominant-baseline="central"' + (o.ls ? ' letter-spacing="' + o.ls + '"' : '') + (o.cls ? ' class="' + o.cls + '"' : '') + tr + '>';
+lines.forEach(function (l, i) { out += '<tspan x="' + f(x) + '" dy="' + (i === 0 ? 0 : f(lh)) + '">' + l + '</tspan>'; });
+return out + '</text>';
+}
+// wall segment as a filled rectangle; eS/eE extend the ends by half a wall so corners meet cleanly
+function wall(a, b, c, d, eS, eE) {
+eS = eS === undefined ? 1 : eS; eE = eE === undefined ? 1 : eE;
+if (b === d) {
+var s = Math.sign(c - a), x0 = a - (eS ? s * H : 0), x1 = c + (eE ? s * H : 0);
+return rect(Math.min(x0, x1), b - H, Math.abs(x1 - x0), T);
+}
+var s2 = Math.sign(d - b), y0 = b - (eS ? s2 * H : 0), y1 = d + (eE ? s2 * H : 0);
+return rect(a - H, Math.min(y0, y1), T, Math.abs(y1 - y0));
+}
+function fixture(x, y, w, h, label, o) {
+o = o || {};
+var s = rect(x, y, w, h, 'fill="' + (o.fill || C.fx) + '" stroke="' + C.fxLine + '" stroke-width="0.05" rx="0.04"');
+if (label) s += text(x + w / 2, y + h / 2, label, o.size || 0.32, { w: 600, rot: o.rot });
+return s;
+}
+function arc(hx, hy, r, sx, sy, ex, ey, sweep) {
+var d = 'M' + hx + ' ' + hy + ' L' + sx + ' ' + sy + ' A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + ex + ' ' + ey + ' Z';
+return '<path d="' + d + '" fill="rgba(110,110,118,.07)" stroke="#8A8A92" stroke-width="0.05" stroke-linejoin="round"/>';
+}
+// movable pieces: wrapped in a group with a transparent hit box so the whole footprint can be grabbed
+var MV = {};
+function mv(id, name, x, y, w, h, inner, built) {
+MV[id] = { id: id, name: name, x: x, y: y, w: w, h: h, cx: x + w / 2, cy: y + h / 2, built: !!built, dx: 0, dy: 0, rot: 0 };
+return '<g class="mv' + (built ? ' built' : '') + '" id="mv-' + id + '" data-mv="' + id + '">' + rect(x, y, w, h, 'fill="transparent"') + inner + '</g>';
+}
+// Geometry below is from the Room Scanner export (mm converted to feet), origin at the main room's north-west inside corner.
+var s = '';
+s += '<defs>' +
+'<pattern id="hw" width="1" height="0.55" patternUnits="userSpaceOnUse"><rect width="1" height="0.55" fill="' + C.hw + '"/><rect y="0.52" width="1" height="0.03" fill="#8A5A20" opacity=".16"/></pattern>' +
+'<pattern id="pl" width="1.5" height="1.5" patternUnits="userSpaceOnUse"><rect width="1.5" height="1.5" fill="#E8D7BC"/><rect x="1.47" width="0.03" height="1.5" fill="#9C8564" opacity=".3"/><rect y="1.47" width="1.5" height="0.03" fill="#9C8564" opacity=".3"/></pattern>' +
+'<pattern id="bt" width="0.5" height="0.5" patternUnits="userSpaceOnUse"><rect width="0.5" height="0.5" fill="#FBFBF8"/><rect x="0.485" width="0.015" height="0.5" fill="#B9B6AE" opacity=".6"/><rect y="0.485" width="0.5" height="0.015" fill="#B9B6AE" opacity=".6"/></pattern>' +
+'</defs>';
+s += rect(-9, -3.6, 28.2, 35, 'fill="#FBFAF7"');
+// outside: deck, fire escape, planter
+s += rect(-8.2, -1.0, 8.025, 27.5, 'fill="' + C.deck + '"');   // deck from the Nov 24 patio scan: 7.9 ft wide, runs from just past the front wall to about 26.5 ft
+s += '<path d="M9.4 -1.8 H18.075 V-0.175 H10.9" fill="none" stroke="#8A8A92" stroke-width="0.05" stroke-dasharray="0.22 0.16"/>';
+// built-in garden trough across the street end of the deck, the full 7.9 ft width (depth by eye)
+s += mv('trough', 'Garden trough', -8.1, -0.95, 7.85, 1.4, rect(-8.1, -0.95, 7.85, 1.4, 'fill="#B08A63" stroke="#7A5C3E" stroke-width="0.06" rx="0.08"') + rect(-7.9, -0.75, 7.45, 1.0, 'fill="#6F5138" rx="0.05"') + [-7.3, -6.4, -5.5, -4.6, -3.7, -2.8, -1.9, -1.0].map(function (x, n) { return '<circle cx="' + x + '" cy="' + (n % 2 ? -0.35 : -0.15) + '" r="0.22" fill="#7FA36B"/>'; }).join('') + text(-4.2, 0.75, 'garden trough, full width', 0.28, { w: 500 }));
+// floors
+s += rect(0, 0, 12.5, 14.1, 'fill="url(#hw)"');          // main room
+s += rect(12.5, 0, 5.4, 9, 'fill="url(#hw)"');           // walk-in closet
+s += rect(8.9, 14.1, 3.6, 9, 'fill="url(#hw)"');         // hall
+s += rect(0, 14.1, 8.9, 15.05, 'fill="url(#pl)"');       // kitchen: large light brown tile
+s += rect(12.5, 9.0, 2.7, 5.1, 'fill="' + C.tile + '"'); // small closet, from the Nov 24 scan: 2.6 x 4.3 ft inside
+s += rect(8.9, 23.1, 6.65, 5.5, 'fill="url(#bt)"'); // bath: white tile
+// bay: the scan gives its 8.8 ft width, the depth is by eye
+var bay = '1.9,0 3.4,-1.8 9.2,-1.8 10.7,0';
+s += '<polygon points="' + bay + '" fill="' + C.hw + '"/>';
+s += '<polygon points="2.4,-0.1 3.7,-1.5 8.9,-1.5 10.2,-0.1" fill="#EFE6D6" stroke="#A69578" stroke-width="0.04"/>';
+// kitchen and bath fixtures
+s += mv('counterW', 'West counter', 0.2, 21.55, 2.2, 5.05, fixture(0.2, 21.55, 2.2, 5.05, ''), true);
+s += mv('counterS', 'South-west counter', 0.2, 26.6, 3.1, 2.4, fixture(0.2, 26.6, 3.1, 2.4, ''), true);
+s += mv('counterE', 'South-east counter', 5.8, 26.6, 2.9, 2.4, fixture(5.8, 26.6, 2.9, 2.4, ''), true);
+s += mv('range', 'Range', 3.35, 26.75, 2.4, 2.2, fixture(3.35, 26.75, 2.4, 2.2, 'RANGE'), true);
+s += mv('sink', 'Sink', 0.5, 23.0, 1.6, 2.2, fixture(0.5, 23.0, 1.6, 2.2, 'SINK', { fill: '#fff' }), true);
+s += mv('fridge', 'Fridge', 6.6, 21.9, 2.1, 2.4, fixture(6.6, 21.9, 2.1, 2.4, 'FRIDGE'));
+s += mv('cabinet', 'Cabinet', 7.6, 24.4, 1.1, 1.7, fixture(7.6, 24.4, 1.1, 1.7, ''), true);
+s += mv('breaker', 'Breaker panel', 14.3, 11.85, 0.7, 1.6, fixture(14.3, 11.85, 0.7, 1.6, '', { fill: '#FFE6B4' }), true);
+s += mv('wc', 'Toilet', 9.15, 26.95, 1.4, 1.4, fixture(9.15, 26.95, 1.4, 1.4, 'WC', { fill: '#fff', size: 0.3 }), true);
+s += mv('vanity', 'Vanity and mirror', 11.0, 27.2, 1.5, 1.22, fixture(11.2, 27.2, 1.1, 1.1, '', {}) + rect(11.0, 28.22, 1.5, 0.15, 'fill="#BBD8EA" stroke="' + C.fxLine + '" stroke-width="0.03"'), true);
+s += mv('tub', 'Tub', 13.5, 23.35, 1.85, 5.05, fixture(13.5, 23.35, 1.85, 5.05, 'TUB', { fill: '#fff', size: 0.34, rot: 90 }), true);
+// heaters
+s += rect(0.2, 6.2, 0.2, 6.3, 'fill="' + C.heat + '"');
+s += rect(0.2, 15.9, 0.2, 3.9, 'fill="' + C.heat + '"');
+s += rect(12.1, 7.2, 0.2, 3.8, 'fill="' + C.heat + '"');
+// bay walls and glass
+s += '<polyline points="' + bay + '" fill="none" stroke="' + C.wall + '" stroke-width="' + T + '" stroke-linejoin="miter"/>';
+s += '<polyline points="' + bay + '" fill="none" stroke="' + C.glass + '" stroke-width="0.17" stroke-linejoin="miter"/>';
+// walls
+var W = [
+[0, 0, 1.9, 0], [10.7, 0, 17.9, 0], [12.5, 9, 17.9, 9], [12.5, 14.1, 15.2, 14.1],
+[0, 14.1, 2.2, 14.1, 1, 0], [6.45, 14.1, 9.3, 14.1, 0, 0], [11.9, 14.1, 12.5, 14.1, 0, 1],
+[0, 29.15, 8.9, 29.15], [8.9, 23.1, 9.35, 23.1, 1, 0], [11.45, 23.1, 15.55, 23.1, 0, 1], [8.9, 28.6, 15.55, 28.6],
+[0, 0, 0, 29.15], [17.9, 0, 17.9, 9], [12.5, 0, 12.5, 3.7, 1, 0], [12.5, 6.9, 12.5, 11.4, 0, 0], [12.5, 13.8, 12.5, 14.1, 0, 1], [15.2, 9, 15.2, 14.1],
+[12.5, 14.1, 12.5, 19.8, 1, 0], [12.5, 22.55, 12.5, 23.1, 0, 1], [8.9, 14.1, 8.9, 19.25, 1, 0], [8.9, 21.65, 8.9, 29.15, 0, 1], [15.55, 23.1, 15.55, 28.6]
+];
+s += '<g fill="' + C.wall + '">' + W.map(function (w) { return wall.apply(null, w); }).join('') + '</g>';
+// windows
+s += '<g fill="' + C.glass + '">' +
+rect(-H, 0.7, T, 3.7) + rect(14.05, -H, 2.5, T) + rect(-H, 15.9, T, 3.95) + rect(-H, 23.45, T, 3.85) + rect(15.55 - H, 24.6, T, 3.25) + '</g>';
+// doors: leaf plus swing
+s += door(12.5, 22.55, 12.5, 19.8, 9.75, 22.55, 2.75, 0);   // entry door: in the hall's east wall, hinged on the south jamb, swings inward
+s += '<line x1="9.35" y1="23.1" x2="11.45" y2="23.1" stroke="#4A4A52" stroke-width="0.1"/>';
+s += arc(9.35, 23.1, 2.1, 11.45, 23.1, 9.35, 25.2, 1);       // bath door
+// labels
+s += text(5.3, 12.55, 'MAIN ROOM', 0.44, { w: 600, ls: 0.04 });
+s += text(5.3, 13.2, '12.5 × 14 ft', 0.32, { w: 500, cls: 'dim' });
+s += text(14.4, 5.45, 'WALK-IN\nCLOSET', 0.36, { w: 600 });
+s += text(14.4, 6.45, '5.3 × 8.9 ft', 0.3, { w: 500, cls: 'dim' });
+s += text(4.5, 23.4, 'KITCHEN', 0.42, { w: 600, ls: 0.03 });
+s += text(4.5, 24.0, '8.8 × 15 ft', 0.3, { w: 500, cls: 'dim' });
+s += text(10.7, 17.2, 'HALL', 0.42, { w: 600, ls: 0.03 });
+s += text(10.7, 17.85, '3.6 × 9 ft', 0.32, { w: 500, cls: 'dim' });
+s += text(13.4, 10.0, 'CLOSET', 0.3, { w: 600 });
+s += text(13.4, 10.55, '2.6 × 4.3 ft', 0.26, { w: 500, cls: 'dim' });
+s += text(12.3, 24.2, 'BATH', 0.36, { w: 600 });
+s += text(12.3, 24.7, '6.7 × 5.5 ft', 0.28, { w: 500, cls: 'dim' });
+s += text(11.75, 26.65, 'sink &\ncabinet', 0.26, { w: 500 });
+s += text(14.6, 21.2, 'entry way', 0.34, { w: 500 });
+s += text(-4.2, 13.6, 'PRIVATE\nROOF DECK', 0.46, { w: 600, ls: 0.03 });
+s += text(-4.2, 15.1, 'step out through\nthe kitchen window', 0.3, { w: 400 });
+s += text(-4.2, 16.9, '7.9 × 27.5 ft', 0.34, { w: 500, cls: 'dim' });
+s += text(-0.5, 2.55, 'window', 0.32, { w: 500, anchor: 'end' });
+s += '<path d="M-0.35 17.85 H-2.3 M-1.8 17.4 L-2.3 17.85 L-1.8 18.3" fill="none" stroke="' + C.ink + '" stroke-width="0.08" stroke-linecap="round" stroke-linejoin="round"/>';
+s += text(-2.6, 18.75, 'out to the deck', 0.3, { w: 600, fill: C.ink, anchor: 'start' });
+s += text(-0.5, 25.4, 'window', 0.32, { w: 500, anchor: 'end' });
+s += text(15.95, 26.2, 'high\nwindow', 0.28, { w: 500, anchor: 'start' });
+s += text(6.3, -2.35, 'bay window, 8.8 ft', 0.34, { w: 500 });
+s += text(14.2, -0.95, 'fire escape (screen must come off)', 0.3, { w: 500 });
+s += text(18.9, -2.75, '↑  STREET', 0.5, { w: 600, fill: C.ink, anchor: 'end' });
+// scale bar
+s += rect(0, 30.3, 5, 0.12, 'fill="' + C.ink + '"');
+s += text(5.35, 30.36, '5 ft', 0.38, { w: 500, anchor: 'start' });
+s += text(18.9, 30.36, 'Top of the plan is the street (north)', 0.34, { w: 400, anchor: 'end' });
+// optional doors: a closed leaf in the opening plus its swing
+function door(hx, hy, cx, cy, ox, oy, r, sweep) {
+return '<line x1="' + hx + '" y1="' + hy + '" x2="' + cx + '" y2="' + cy + '" stroke="#4A4A52" stroke-width="0.1"/>' + arc(hx, hy, r, cx, cy, ox, oy, sweep);
+}
+var DOORS = [
+{ id: 'hallMain', name: 'Hall door to the main room', note: 'The scan shows a 2.6 ft door here. Drawn swinging into the hall.', on: true, svg: door(11.9, 14.1, 9.3, 14.1, 11.9, 16.7, 2.6, 0) },
+{ id: 'closet', name: 'Small closet door', note: '2.4 ft wide, in the main room’s east wall. Swings into the main room.', on: true, svg: door(12.5, 13.8, 12.5, 11.4, 10.1, 13.8, 2.4, 0) },
+{ id: 'iron', name: 'Ironing board cupboard door', note: 'Flat in the wall when closed. On the kitchen east wall by the hall. Shown open, swinging left into the kitchen.', on: false, svg: door(8.9, 15.0, 8.9, 16.6, 7.3, 15.0, 1.6, 1) + text(8.0, 15.8, 'ironing\nboard', 0.24, { w: 500 }) },
+{ id: 'walkin', name: 'Walk-in closet door', note: 'Available, not on yet. The opening is 3.2 ft wide. Swings out into the main room.', on: false, svg: door(12.5, 6.9, 12.5, 3.7, 9.3, 6.9, 3.2, 0) },
+{ id: 'kitchenHall', name: 'Kitchen door, hall side', note: 'Available, not on yet. The opening is 2.4 ft wide.', on: false, svg: door(8.9, 19.25, 8.9, 21.65, 6.5, 19.25, 2.4, 1) },
+{ id: 'walkinCurtain', name: 'Curtain across the walk-in opening', note: 'An idea for when the bed is in the walk-in: pull it closed and the bed disappears.', on: false, svg: '<path d="M12.5 3.7 q0.25 0.2 0 0.4 t0 0.4 t0 0.4 t0 0.4 t0 0.4 t0 0.4 t0 0.4 t0 0.4" fill="none" stroke="#8A5FA0" stroke-width="0.14" stroke-linecap="round"/>' },
+{ id: 'kitchenMain', name: 'Kitchen doors, main room side', note: 'Available, not on yet. The opening is 4.3 ft wide. Drawn as a pair.', on: false, svg: door(2.2, 14.1, 4.325, 14.1, 2.2, 16.225, 2.125, 1) + door(6.45, 14.1, 4.325, 14.1, 6.45, 16.225, 2.125, 0) }
+];
+try { var sd = JSON.parse(localStorage.getItem('floorplan-15th-doors') || 'null'); if (sd) DOORS.forEach(function (d) { if (d.id in sd) d.on = !!sd[d.id]; }); } catch (e) {}
+s += '<g id="doorsLayer"></g>';
+svg.innerHTML = s + '<g id="furn"></g><g id="hnd"></g>';
+var doorsLayer = document.getElementById('doorsLayer');
+function renderDoors() {
+doorsLayer.innerHTML = DOORS.filter(function (d) { return d.on; }).map(function (d) { return d.svg; }).join('');
+try { var o = {}; DOORS.forEach(function (d) { o[d.id] = d.on; }); localStorage.setItem('floorplan-15th-doors', JSON.stringify(o)); } catch (e) {}
+}
+var dl = document.getElementById('doorlist');
+DOORS.forEach(function (d) {
+var li = document.createElement('li');
+li.innerHTML = '<label><input type="checkbox"' + (d.on ? ' checked' : '') + '><span>' + d.name + '<small>' + d.note + '</small></span></label>';
+li.querySelector('input').addEventListener('change', function (e) { d.on = e.target.checked; renderDoors(); });
+dl.appendChild(li);
+});
+renderDoors();
+var furn = document.getElementById('furn'), hnd = document.getElementById('hnd');
+var dimEls = svg.querySelectorAll('.dim');
+function setDims(on) { dimEls.forEach(function (e) { e.style.display = on ? '' : 'none'; }); }
+setDims(true);
+document.getElementById('dims').addEventListener('change', function (e) { setDims(e.target.checked); });
+// ---------- furniture ----------
+var K = '#3C5A8C', G = '#3C7A4A';
+var KINDS = [
+{ id: 'bed', name: 'Queen bed (Chalipa frame)', short: 'Queen bed', w: 5.48, h: 7.13, fill: '#E8F0FC', front: 'bed' },
+{ id: 'dresser', name: 'Dresser', w: 3, h: 1.5, fill: '#fff', front: 'case' },
+{ id: 'vanity', name: 'Vanity table', w: 2.5, h: 1.3, fill: '#fff', front: 'case' },
+{ id: 'bedside', name: 'Bedside table', short: 'Bedside', w: 1.5, h: 1.5, fill: '#fff' },
+{ id: 'dining', name: 'Dining table', w: 4.58, h: 2.33, fill: '#fff' },
+{ id: 'sofa', name: 'Couch (2-seat)', short: 'Couch', w: 5.5, h: 3, fill: '#fff', front: 'seat', arms: 2 },
+{ id: 'love', name: 'Love seat half', w: 3, h: 3, fill: '#fff', front: 'seat' },
+{ id: 'recliner', name: 'Recliner', w: 2.75, h: 2.75, fill: '#fff', front: 'seat', arms: 2 },
+{ id: 'ottoman', name: 'Ottoman', w: 3, h: 2, fill: '#fff' },
+{ id: 'desk', name: 'Work desk (FlexiSpot EN1)', short: 'Work desk', w: 4.58, h: 2.33, fill: '#fff', front: 'case' },
+{ id: 'dchair', name: 'Work chair', w: 2, h: 2, fill: '#fff', front: 'seat' },
+{ id: 'shelf', name: 'Shelf', w: 3, h: 1, fill: '#fff', front: 'case' },
+{ id: 'lamp', name: 'Cascade lamp', short: 'Lamp', w: 1.5, h: 1.5, fill: '#FFF4D2', round: true },
+{ id: 'plant', name: 'Big plant', short: 'Plant', w: 1.5, h: 1.5, fill: '#D5EBD5', stroke: G, round: true },
+{ id: 'screen', name: 'Projected picture, 100 in', short: 'Projected picture, projector in front', w: 7.25, h: 0.5, fill: '#E9E1F7', stroke: '#6B4FA8', along: true },
+{ id: 'console', name: 'Low media console (idea)', short: '', w: 4, h: 1.25, fill: '#F4F1E8', front: 'case' },
+{ id: 'proj', name: 'LG CineBeam S', short: 'Projector', w: 0.36, h: 0.53, fill: '#6B4FA8', stroke: '#6B4FA8' },
+{ id: 'lowbed', name: 'Low queen platform, mattress width (idea)', short: 'Low queen bed', w: 5.0, h: 6.75, fill: '#E8F0FC', front: 'bed' },
+{ id: 'curtain', name: 'Ceiling curtain or divider (idea)', short: 'Curtain', w: 7.5, h: 0.3, fill: '#EADFF0', stroke: '#8A5FA0', along: true },
+{ id: 'olounge', name: 'Outdoor lounge chair (idea)', short: 'Lounge chair', w: 2.5, h: 3, fill: '#F4F1E8', deck: true, front: 'seat', arms: 2 },
+{ id: 'otable', name: 'Outdoor side table (idea)', short: 'Table', w: 1.5, h: 1.5, fill: '#F4F1E8', round: true, deck: true }
+];
+var kindById = {}; KINDS.forEach(function (k) { kindById[k.id] = k; });
+var items = [], selected = null, selMv = null, uid = 1, dragging = null;
+// Storage keys carry "-scan" because positions saved against the old by-eye plan no longer line up with the walls.
+var FKEY = 'floorplan-15th-furniture-v3', MKEY = 'floorplan-15th-moved-scan';
+try {
+var saved = JSON.parse(localStorage.getItem(FKEY) || 'null');
+if (saved && saved.items) { items = saved.items.filter(function (i) { return kindById[i.kind]; }); uid = saved.uid || items.length + 1; }
+else {
+// first visit after the rescan: keep any sizes typed in before, and re-place those pieces with the new layout
+var old = JSON.parse(localStorage.getItem('floorplan-15th-furniture-scan') || 'null') || JSON.parse(localStorage.getItem('floorplan-15th-furniture') || 'null');
+if (old && old.items) old.items.forEach(function (i) { var k = kindById[i.kind]; if (k && k.id !== 'dining' && k.id !== 'desk' && k.id !== 'bed' && (i.w || i.h)) { k.w = i.w || k.w; k.h = i.h || k.h; } });
+}
+} catch (e) {}
+try { var sm = JSON.parse(localStorage.getItem(MKEY) || 'null'); if (sm) Object.keys(sm).forEach(function (id) { if (MV[id]) { MV[id].dx = +sm[id].dx || 0; MV[id].dy = +sm[id].dy || 0; MV[id].rot = +sm[id].rot || 0; } }); } catch (e) {}
+function persistMv() { var o = {}; Object.keys(MV).forEach(function (id) { var m = MV[id]; if (m.dx || m.dy || m.rot) o[id] = { dx: m.dx, dy: m.dy, rot: m.rot }; }); try { localStorage.setItem(MKEY, JSON.stringify(o)); } catch (e) {} }
+function mvTransform(m) { return 'translate(' + f(m.dx) + ' ' + f(m.dy) + ') rotate(' + m.rot + ' ' + f(m.cx) + ' ' + f(m.cy) + ')'; }
+function renderMv() {
+Object.keys(MV).forEach(function (id) {
+var m = MV[id], g = document.getElementById('mv-' + id);
+g.setAttribute('transform', mvTransform(m));
+var old = g.querySelector('.selbox'); if (old) g.removeChild(old);
+if (selMv === id) {
+var r = document.createElementNS(NS, 'rect');
+r.setAttribute('class', 'selbox');
+r.setAttribute('x', m.x - 0.08); r.setAttribute('y', m.y - 0.08); r.setAttribute('width', m.w + 0.16); r.setAttribute('height', m.h + 0.16);
+r.setAttribute('fill', 'none'); r.setAttribute('stroke', '#2F7D5B'); r.setAttribute('stroke-width', '0.09'); r.setAttribute('stroke-dasharray', '0.25 0.15'); r.setAttribute('rx', '0.1');
+g.appendChild(r);
+}
+});
+}
+function persist() { try { localStorage.setItem(FKEY, JSON.stringify({ items: items, uid: uid })); } catch (e) {} }
+function snap(v) { return Math.round(v * 4) / 4; }
+// on-canvas handles for the selected piece: a rotate handle above it, and a resize dot on added furniture
+function drawHandles() {
+var cx, cy, rot, w, h, size = false;
+if (selected !== null) {
+var it = items.filter(function (i) { return i.uid === selected; })[0]; if (!it) { hnd.innerHTML = ''; return; }
+var k = kindById[it.kind]; cx = it.x; cy = it.y; rot = it.rot; w = it.w || k.w; h = it.h || k.h; size = true;
+} else if (selMv !== null) {
+var m = MV[selMv]; cx = m.cx + m.dx; cy = m.cy + m.dy; rot = m.rot; w = m.w; h = m.h;
+} else { hnd.innerHTML = ''; return; }
+var a = rot * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+function P(lx, ly) { return [cx + lx * ca - ly * sa, cy + lx * sa + ly * ca]; }
+var top = P(0, -h / 2), rp = P(0, -h / 2 - 1.0), out = '';
+out += '<line x1="' + f(top[0]) + '" y1="' + f(top[1]) + '" x2="' + f(rp[0]) + '" y2="' + f(rp[1]) + '" stroke="#2F7D5B" stroke-width="0.07"/>';
+out += '<g class="handle" data-h="rot" style="cursor:grab;touch-action:none"><circle cx="' + f(rp[0]) + '" cy="' + f(rp[1]) + '" r="0.55" fill="#fff" stroke="#2F7D5B" stroke-width="0.09"/>' +
+'<text x="' + f(rp[0]) + '" y="' + f(rp[1] + 0.03) + '" font-size="0.72" font-family="Inter, system-ui, sans-serif" font-weight="700" fill="#2F7D5B" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">↻</text></g>';
+if (size) {
+var cp = P(w / 2, h / 2);
+out += '<g class="handle" data-h="size" style="cursor:nwse-resize;touch-action:none"><circle cx="' + f(cp[0]) + '" cy="' + f(cp[1]) + '" r="0.42" fill="#2F7D5B" stroke="#fff" stroke-width="0.08"/></g>';
+}
+hnd.innerHTML = out;
+}
+// The back of a piece is its top edge before rotation; the front faces down. Rotation 0 faces south, 90 west, 180 north, 270 east.
+function frontMarks(k, w, h, col) {
+if (!k.front) return '';
+var o = '', op = 'fill="' + col + '" fill-opacity=".28"';
+if (k.front === 'bed') {
+var pw = (w - 0.6) / 2;
+o += rect(-w / 2, -h / 2, w, 0.3, op);
+o += rect(-w / 2 + 0.2, -h / 2 + 0.45, pw, 0.85, 'fill="#fff" stroke="' + col + '" stroke-width="0.04" rx="0.2"');
+o += rect(0.1, -h / 2 + 0.45, pw, 0.85, 'fill="#fff" stroke="' + col + '" stroke-width="0.04" rx="0.2"');
+} else {
+var band = Math.min(k.front === 'seat' ? 0.6 : 0.3, h * 0.22);
+o += rect(-w / 2, -h / 2, w, band, op);
+if (k.arms) { var aw = Math.min(0.45, w * 0.14); o += rect(-w / 2, -h / 2, aw, h, op) + rect(w / 2 - aw, -h / 2, aw, h, op); }
+}
+var t = Math.min(0.14, w * 0.07, h * 0.07), y1 = h / 2 - 0.1, y0 = y1 - t * 1.3;
+o += '<path d="M' + f(-t) + ' ' + f(y0) + ' L' + f(t) + ' ' + f(y0) + ' L0 ' + f(y1) + ' Z" fill="' + col + '" fill-opacity=".75"/>';
+return o;
+}
+// Label sized to fit the piece as it sits on the plan (text stays upright, so a piece turned 90 degrees swaps its box).
+function fitLabel(k, w, h, rot, col) {
+var side = ((rot % 180) + 180) % 180, turned = !k.along && side > 45 && side < 135;
+var bw = (turned ? h : w) * (k.round ? 0.68 : 0.86), bh = (turned ? w : h) * (k.round ? 0.62 : (k.front ? 0.62 : 0.8));
+var name = (k.short !== undefined ? k.short : k.name).toUpperCase(), words = name.split(' ');
+if (!name) return '';
+var wraps = [[name]];
+for (var i = 1; i < words.length; i++) wraps.push([words.slice(0, i).join(' '), words.slice(i).join(' ')]);
+var dims = w + ' \u00d7 ' + h + ' ft';
+function fit(lines) { var L = Math.max.apply(null, lines.map(function (l) { return l.length; })); return Math.min(0.36, bw / (L * 0.66), bh / (lines.length * 1.22)); }
+function best(extra) { var b = { fs: 0 }; wraps.forEach(function (wr) { var ls = extra ? wr.concat([extra]) : wr, v = fit(ls); if (v > b.fs) b = { fs: v, lines: ls }; }); return b; }
+var b = Math.min(w, h) >= 1.8 ? best(dims) : { fs: 0 }; if (b.fs < 0.27) b = best(null); if (b.fs < 0.17) return '';
+var dy = k.front ? -Math.min(0.25, h * 0.16) : 0;
+return text(0, dy, b.lines.join('\n'), f(b.fs), { w: 600, fill: col, rot: k.along ? 0 : (rot ? -rot : 0) });
+}
+function render() {
+var out = '';
+items.forEach(function (it) {
+var k = kindById[it.kind], sel = it.uid === selected, w = it.w || k.w, h = it.h || k.h, col = k.stroke || K;
+var label = '';
+label = fitLabel(k, w, h, it.rot, col);
+label = frontMarks(k, w, h, col) + label;
+out += '<g class="item" data-uid="' + it.uid + '" transform="translate(' + f(it.x) + ' ' + f(it.y) + ') rotate(' + it.rot + ')" style="cursor:grab;touch-action:none">' +
+rect(-w / 2, -h / 2, w, h, 'fill="' + k.fill + '" fill-opacity=".92" stroke="' + (sel ? '#2F7D5B' : col) + '" stroke-width="' + (sel ? 0.1 : 0.06) + '" rx="' + (k.round ? f(Math.min(w, h) / 2) : 0.1) + '"') + label + '</g>';
+});
+furn.innerHTML = out;
+drawHandles();
+var any = selected !== null || selMv !== null;
+document.getElementById('rot').disabled = !any;
+var del = document.getElementById('del');
+del.disabled = !any; del.textContent = selMv !== null ? 'Put back' : 'Remove';
+var si = selected !== null ? items.filter(function (i) { return i.uid === selected; })[0] : null;
+var wi = document.getElementById('sw'), hi = document.getElementById('sh');
+wi.disabled = hi.disabled = !si;
+if (si) { var kk = kindById[si.kind]; if (document.activeElement !== wi) wi.value = si.w || kk.w; if (document.activeElement !== hi) hi.value = si.h || kk.h; } else { wi.value = hi.value = ''; }
+renderMv();
+}
+function add(id) {
+var k = kindById[id], n = items.length % 6;
+var it = k.deck ? { uid: uid++, kind: id, x: snap(-6 + (items.length % 2) * 2.5), y: snap(7 + (items.length % 3)), rot: 0 } : { uid: uid++, kind: id, x: snap(6 + n * 0.5), y: snap(7 + n * 0.5), rot: 0 };
+items.push(it); selected = it.uid; persist(); render();
+}
+function svgPoint(ev) {
+var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+svg.addEventListener('pointerdown', function (ev) {
+var hh = ev.target.closest && ev.target.closest('.handle');
+if (hh && (selected !== null || selMv !== null)) {
+var tgt = selected !== null ? items.filter(function (i) { return i.uid === selected; })[0] : MV[selMv];
+dragging = { handle: hh.getAttribute('data-h'), tgt: tgt, isMv: selected === null, p0: svgPoint(ev), moved: false };
+try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
+ev.preventDefault(); return;
+}
+var g = ev.target.closest && ev.target.closest('.item');
+var gm = !g && ev.target.closest && ev.target.closest('.mv');
+if (!g && !gm) { if (selected !== null || selMv !== null) { selected = null; selMv = null; render(); } return; }
+var p = svgPoint(ev);
+if (gm) {
+var m = MV[gm.getAttribute('data-mv')];
+selMv = m.id; selected = null;
+dragging = { mv: m, px: p.x, py: p.y, dx0: m.dx, dy0: m.dy };
+} else {
+var it = items.filter(function (i) { return i.uid === +g.getAttribute('data-uid'); })[0];
+selected = it.uid; selMv = null;
+items = items.filter(function (i) { return i !== it; }); items.push(it);   // bring to front
+dragging = { it: it, dx: it.x - p.x, dy: it.y - p.y };
+}
+render();
+try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
+ev.preventDefault();
+});
+svg.addEventListener('pointermove', function (ev) {
+if (!dragging) return;
+var p = svgPoint(ev);
+if (dragging.handle) {
+var t = dragging.tgt, cx = dragging.isMv ? t.cx + t.dx : t.x, cy = dragging.isMv ? t.cy + t.dy : t.y;
+if (!dragging.moved && Math.hypot(p.x - dragging.p0.x, p.y - dragging.p0.y) > 0.25) dragging.moved = true;
+if (!dragging.moved) return;
+if (dragging.handle === 'rot') {
+var ang = Math.atan2(p.y - cy, p.x - cx) * 180 / Math.PI + 90;
+t.rot = ((Math.round(ang / 15) * 15) % 360 + 360) % 360;
+} else {
+var a = t.rot * Math.PI / 180, dx = p.x - cx, dy = p.y - cy;
+t.w = Math.max(0.25, snap(2 * Math.abs(dx * Math.cos(a) + dy * Math.sin(a))));
+t.h = Math.max(0.25, snap(2 * Math.abs(-dx * Math.sin(a) + dy * Math.cos(a))));
+}
+render(); return;
+}
+if (dragging.mv) {
+dragging.mv.dx = snap(dragging.dx0 + p.x - dragging.px); dragging.mv.dy = snap(dragging.dy0 + p.y - dragging.py);
+document.getElementById('mv-' + dragging.mv.id).setAttribute('transform', mvTransform(dragging.mv));
+drawHandles();
+return;
+}
+dragging.it.x = snap(p.x + dragging.dx); dragging.it.y = snap(p.y + dragging.dy);
+var g = furn.querySelector('[data-uid="' + dragging.it.uid + '"]');
+if (g) g.setAttribute('transform', 'translate(' + f(dragging.it.x) + ' ' + f(dragging.it.y) + ') rotate(' + dragging.it.rot + ')');
+drawHandles();
+});
+function endDrag() {
+if (!dragging) return;
+if (dragging.handle === 'rot' && !dragging.moved) { dragging.tgt.rot = (dragging.tgt.rot + 90) % 360; }
+dragging = null; persist(); persistMv(); render();
+}
+svg.addEventListener('pointerup', endDrag);
+svg.addEventListener('pointercancel', endDrag);
+function rotateSel() { if (selMv !== null) { var m = MV[selMv]; m.rot = (m.rot + 90) % 360; persistMv(); render(); return; } var it = items.filter(function (i) { return i.uid === selected; })[0]; if (it) { it.rot = (it.rot + 90) % 360; persist(); render(); } }
+function removeSel() { if (selMv !== null) { var m = MV[selMv]; m.dx = m.dy = m.rot = 0; persistMv(); render(); return; } items = items.filter(function (i) { return i.uid !== selected; }); selected = null; persist(); render(); }
+document.getElementById('rot').addEventListener('click', rotateSel);
+document.getElementById('del').addEventListener('click', removeSel);
+document.getElementById('clr').addEventListener('click', function () { items = []; selected = null; persist(); render(); });
+document.addEventListener('keydown', function (ev) {
+if ((selected === null && selMv === null) || /input|textarea/i.test(ev.target.tagName)) return;
+var it = selMv !== null ? MV[selMv] : items.filter(function (i) { return i.uid === selected; })[0]; if (!it) return;
+var isMv = selMv !== null, kx = isMv ? 'dx' : 'x', ky = isMv ? 'dy' : 'y';
+if (ev.key === 'r' || ev.key === 'R') { rotateSel(); ev.preventDefault(); }
+else if (ev.key === 'Delete' || ev.key === 'Backspace') { removeSel(); ev.preventDefault(); }
+else if (ev.key.indexOf('Arrow') === 0) {
+if (ev.key === 'ArrowLeft') it[kx] -= 0.25; if (ev.key === 'ArrowRight') it[kx] += 0.25;
+if (ev.key === 'ArrowUp') it[ky] -= 0.25; if (ev.key === 'ArrowDown') it[ky] += 0.25;
+persist(); persistMv(); render(); ev.preventDefault();
+}
+});
+function setSize() {
+var it = items.filter(function (i) { return i.uid === selected; })[0]; if (!it) return;
+var w = parseFloat(document.getElementById('sw').value), h = parseFloat(document.getElementById('sh').value);
+if (w >= 0.25) it.w = Math.round(w * 4) / 4; if (h >= 0.25) it.h = Math.round(h * 4) / 4;
+persist(); render();
+}
+document.getElementById('sw').addEventListener('input', setSize);
+document.getElementById('sh').addEventListener('input', setSize);
+// numbered layouts: [kind, x, y, rotation]. Rotation 0 faces south, 90 west, 180 north, 270 east.
+var DECK = [['olounge', -6.2, 6.5, 0], ['otable', -4.0, 6.5, 0], ['olounge', -1.8, 6.5, 0]];
+var EATIN = [['dining', 4.5, 18.5, 90]];
+var WALKIN_OFFICE = [['desk', 15.2, 1.365, 0], ['dchair', 15.2, 3.55, 180], ['dresser', 16.95, 6.9, 90], ['vanity', 14.0, 8.1, 180]];
+var KITCHEN_LIVING = [['sofa', 2.05, 18.3, 270], ['dining', 6.4, 17.6, 90]];
+var BED_IN_WALKIN = [['bed', 15.2, 3.74, 0]];   // the Chalipa frame is wider than the walk-in, so it overlaps the walls on purpose
+var LAYOUTS = [
+{ n: 1, name: 'Bay reading nook (recommended so far)', items: [['bed', 3.75, 3.0, 270], ['bedside', 0.95, 6.5, 0], ['recliner', 9.0, 1.2, 0], ['ottoman', 9.0, 3.9, 0], ['shelf', 11.8, 1.9, 90], ['plant', 4.2, -0.8, 0], ['plant', 6.3, -0.85, 0], ['sofa', 2.05, 9.95, 270], ['love', 8.5, 7.9, 90], ['love', 8.5, 10.9, 90], ['lamp', 7.7, 13.15, 0]].concat(WALKIN_OFFICE, EATIN, DECK) },
+{ n: 2, name: 'Face to face around the ottoman', items: [['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['recliner', 9, 1.2, 0], ['shelf', 11.8, 1.9, 90], ['plant', 4.2, -0.8, 0], ['plant', 6.3, -0.85, 0], ['sofa', 2.05, 9.95, 270], ['ottoman', 5.75, 9.95, 90], ['love', 9.7, 8.45, 90], ['love', 9.7, 11.45, 90], ['lamp', 7.7, 13.15, 0]].concat(WALKIN_OFFICE, EATIN, DECK) },
+{ n: 3, name: 'Desk in the bay', items: [['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['desk', 9.7, 1.365, 0], ['dchair', 9.7, 3.55, 180], ['plant', 4.2, -0.8, 0], ['plant', 6.3, -0.85, 0], ['sofa', 2.05, 9.95, 270], ['ottoman', 5, 10.4, 90], ['love', 8.25, 9.4, 90], ['love', 8.25, 12.4, 90], ['recliner', 9.75, 6, 90], ['lamp', 10.9, 9.4, 0], ['dresser', 15.2, 8, 180], ['vanity', 15.3, 0.9, 0], ['shelf', 17.2, 4.5, 90]].concat(EATIN, DECK) },
+{ n: 4, name: 'L-shape', items: [['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['recliner', 9, 1.2, 0], ['ottoman', 9, 3.9, 0], ['shelf', 11.8, 1.9, 90], ['plant', 4.2, -0.8, 0], ['plant', 6.3, -0.85, 0], ['sofa', 2.05, 9.95, 270], ['love', 5.3, 7.9, 0], ['love', 8.3, 7.9, 0], ['lamp', 7.7, 13.15, 0]].concat(WALKIN_OFFICE, EATIN, DECK) },
+{ n: 5, name: 'Floating bed', items: [['bed', 6, 3.5, 180], ['bedside', 2.4, 6.1, 0], ['bedside', 9.6, 6.1, 0], ['sofa', 6, 8.6, 0], ['ottoman', 6, 11.3, 0], ['love', 1.9, 11, 270], ['love', 10.4, 11, 90], ['recliner', 10.6, 1.9, 270], ['shelf', 1, 4.5, 270], ['plant', 4.2, -0.8, 0], ['plant', 7.8, -0.8, 0], ['lamp', 1.2, 8, 0]].concat(WALKIN_OFFICE, EATIN, DECK) },
+{ n: 6, name: 'Bed in the walk-in (frame too wide), bay seats, desk by the deck window', items: BED_IN_WALKIN.concat([['shelf', 15.2, 8.3, 180],
+['love', 6.3, 1.7, 180], ['love', 9.3, 1.7, 180], ['plant', 4.2, -0.9, 0], ['plant', 8.4, -0.9, 0],
+['desk', 1.4, 2.6, 270], ['dchair', 3.6, 2.6, 90], ['dresser', 11.55, 2.0, 90],
+['sofa', 2.05, 9.85, 270], ['ottoman', 5.75, 9.85, 90], ['recliner', 9.1, 9.85, 90], ['lamp', 4.3, 6.9, 0], ['vanity', 7.875, 13.2, 180]], EATIN, DECK) },
+{ n: 7, name: 'Bed alone in the walk-in (frame too wide), desk in the bay', items: BED_IN_WALKIN.concat([
+['desk', 8.0, 1.4, 0], ['dchair', 8.0, 3.6, 180], ['plant', 3.8, -0.8, 0], ['plant', 5.6, -0.95, 0],
+['recliner', 3.8, 2.6, 90], ['ottoman', 1.4, 2.6, 90], ['dresser', 11.55, 2.0, 90],
+['sofa', 2.05, 9.85, 270], ['love', 8.6, 7.95, 90], ['love', 8.6, 10.95, 90], ['bedside', 5.3, 9.45, 0], ['lamp', 4.3, 7.0, 0],
+['vanity', 7.875, 13.2, 180], ['shelf', 9.4, 17.75, 270]], EATIN, DECK) },
+{ n: 8, name: 'Living kitchen, bed in the walk-in (frame too wide)', items: BED_IN_WALKIN.concat(KITCHEN_LIVING, [
+['love', 6.3, 1.7, 180], ['love', 9.3, 1.7, 180], ['plant', 4.2, -0.9, 0], ['plant', 8.4, -0.9, 0],
+['desk', 1.4, 2.6, 270], ['dchair', 3.6, 2.6, 90], ['dresser', 11.55, 2.0, 90],
+['recliner', 3.0, 9.5, 270], ['ottoman', 5.4, 9.5, 90], ['bedside', 3.0, 11.8, 0], ['lamp', 1.6, 7.3, 0],
+['vanity', 7.875, 13.2, 180], ['shelf', 9.4, 17.75, 270]], DECK) },
+{ n: 9, name: 'Living kitchen, bed stays in the main room', items: KITCHEN_LIVING.concat([
+['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['recliner', 9.0, 1.3, 180], ['plant', 4.2, -0.8, 0], ['plant', 6.3, -0.85, 0], ['shelf', 11.8, 1.9, 90],
+['love', 2.8, 10, 270], ['love', 9.2, 10, 90], ['ottoman', 6.0, 10, 90], ['lamp', 7.7, 13.15, 0]], WALKIN_OFFICE, DECK) },
+{ n: 10, name: 'Projector on the west wall', items: [['bed', 3.75, 3, 270], ['plant', 4.2, -0.8, 0], ['lamp', 6.3, -0.85, 0], ['love', 8.85, 1.6, 180], ['shelf', 11.8, 1.9, 90],
+['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
+['recliner', 9.0, 5.375, 90], ['sofa', 9.1, 9.7, 90], ['ottoman', 5.6, 9.7, 90], ['bedside', 9.1, 13.15, 0],
+['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(WALKIN_OFFICE, DECK) },
+{ n: 11, name: 'Projector wall, desk in the bay', items: [['bed', 3.75, 3, 270], ['plant', 4.2, -0.8, 0], ['lamp', 6.3, -0.85, 0],
+['desk', 9.6, 1.365, 0], ['dchair', 9.6, 3.55, 180],
+['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
+['recliner', 8.9, 6.0, 90], ['sofa', 8.8, 10.1, 90], ['ottoman', 5.4, 10.1, 90],
+['love', 14.2, 1.7, 0], ['shelf', 17.2, 2.5, 90], ['dresser', 16.95, 6.9, 90], ['vanity', 14.0, 8.1, 180],
+['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) },
+{ n: 12, name: 'Kitchen cinema lounge', items: [['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['plant', 4.2, -0.8, 0], ['lamp', 6.3, -0.85, 0],
+['recliner', 9.0, 1.3, 180], ['shelf', 11.8, 1.9, 90],
+['dining', 6.5, 10.0, 90], ['love', 3.8, 10.0, 270], ['love', 9.2, 10.0, 90],
+['sofa', 2.05, 18.0, 270], ['ottoman', 5.3, 18.0, 90],
+['screen', 8.45, 16.9, 90, 4.36, 0.5], ['console', 8.1, 16.9, 90], ['proj', 7.75, 16.9, 270]].concat(WALKIN_OFFICE, DECK) },
+{ n: 13, name: 'Breakfast in the bay, couch in the kitchen', items: [['bed', 3.75, 3, 270], ['bedside', 0.95, 6.5, 0], ['plant', 4.2, -0.8, 0],
+['dining', 9.6, 1.37, 0], ['love', 8.85, 4.1, 180], ['lamp', 11.5, 4.5, 0],
+['recliner', 3.0, 9.6, 270], ['love', 9.2, 9.6, 90], ['shelf', 7.875, 13.4, 180],
+['sofa', 2.05, 18.0, 270], ['ottoman', 5.3, 18.0, 90]].concat(WALKIN_OFFICE, DECK) },
+{ n: 14, name: 'Bed hidden: low bed in the walk-in, breakfast bay, cinema', items: [['lowbed', 15.2, 3.55, 0], ['shelf', 15.2, 8.3, 180],
+['dining', 7.1, 1.37, 0], ['love', 6.2, 4.1, 180], ['love', 9.2, 4.1, 180], ['dresser', 11.55, 1.9, 90],
+['desk', 1.4, 2.6, 270], ['dchair', 3.4, 2.6, 90],
+['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
+['sofa', 8.8, 9.6, 90], ['ottoman', 5.4, 9.6, 90], ['vanity', 7.875, 13.2, 180], ['lamp', 4.0, -0.9, 0], ['plant', 9.2, -0.7, 0],
+['recliner', 2.0, 17.0, 270], ['bedside', 2.0, 19.2, 0]].concat(DECK) },
+{ n: 15, name: 'Bed hidden: curtained sleep corner in the main room', items: [['lowbed', 3.575, 2.9, 270], ['curtain', 3.95, 5.9, 0],
+['recliner', 9.2, 1.3, 180], ['plant', 4.2, -0.8, 0], ['lamp', 6.3, -0.85, 0], ['shelf', 11.8, 1.9, 90],
+['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
+['sofa', 8.8, 9.6, 90], ['ottoman', 5.4, 9.6, 90], ['vanity', 7.875, 13.2, 180],
+['desk', 15.2, 1.365, 0], ['dchair', 15.2, 3.55, 180], ['dresser', 16.95, 6.9, 90], ['love', 14.5, 7.25, 180],
+['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) },
+{ n: 16, name: 'Bed hidden: low bed in the walk-in, desk in the bay, dining in the kitchen', items: [['lowbed', 15.2, 3.55, 0], ['shelf', 15.2, 8.3, 180],
+['desk', 7.0, 1.365, 0], ['dchair', 7.0, 3.55, 180], ['plant', 3.9, -0.8, 0], ['plant', 10.0, -0.5, 0],
+['recliner', 2.0, 2.6, 90], ['ottoman', 2.0, 5.3, 0], ['dresser', 11.55, 1.9, 90],
+['sofa', 2.05, 9.95, 270], ['love', 8.5, 9.95, 90], ['bedside', 5.3, 9.95, 0], ['lamp', 4.4, 7.0, 0], ['vanity', 7.875, 13.2, 180],
+['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) }
+];
+var laySel = document.getElementById('lay');
+LAYOUTS.forEach(function (L, i) { var o = document.createElement('option'); o.value = i; o.textContent = L.n + '. ' + L.name; laySel.appendChild(o); });
+var LAYOUT = LAYOUTS[0].items;
+function loadLayout() {
+LAYOUT = LAYOUTS[+laySel.value].items;
+undoItems = { items: items, uid: uid };
+items = LAYOUT.map(function (l) { var it = { uid: uid++, kind: l[0], x: l[1], y: l[2], rot: l[3] }; if (l[4]) it.w = l[4]; if (l[5]) it.h = l[5]; return it; });
+selected = null; selMv = null; persist(); render();
+document.getElementById('und').disabled = false;
+}
+laySel.addEventListener('change', loadLayout);   // picking a layout loads it right away
+function stepLayout(d) { laySel.value = String((+laySel.value + d + LAYOUTS.length) % LAYOUTS.length); loadLayout(); }
+document.getElementById('layPrev').addEventListener('click', function () { stepLayout(-1); });
+document.getElementById('layNext').addEventListener('click', function () { stepLayout(1); });
+var undoItems = null;
+document.getElementById('sug').addEventListener('click', loadLayout);
+var themeBtn = document.getElementById('theme');
+function syncTheme() { themeBtn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? 'Light mode' : 'Dark mode'; }
+themeBtn.addEventListener('click', function () {
+var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', t); syncTheme();
+try { localStorage.setItem('floorplan-15th-theme', t); } catch (e) {}
+});
+syncTheme();
+if (window.innerWidth < 700) document.getElementById('howto').removeAttribute('open');
+// zoom: widen the drawing inside its scroll box so small screens can get closer
+var zoom = 1, wrap = document.querySelector('.planwrap');
+function setZoom(z) {
+var cx = (wrap.scrollLeft + wrap.clientWidth / 2) / (wrap.scrollWidth || 1);
+zoom = Math.max(1, Math.min(3, z));
+svg.style.width = (zoom * 100) + '%'; svg.style.minWidth = zoom > 1 ? '0' : '';
+wrap.scrollLeft = cx * wrap.scrollWidth - wrap.clientWidth / 2;
+}
+document.getElementById('zIn').addEventListener('click', function () { setZoom(zoom + 0.5); });
+document.getElementById('zOut').addEventListener('click', function () { setZoom(zoom - 0.5); });
+document.getElementById('zFit').addEventListener('click', function () { setZoom(1); });
+document.getElementById('und').addEventListener('click', function () {
+if (!undoItems) return;
+items = undoItems.items; uid = Math.max(uid, undoItems.uid); undoItems = null; selected = null; persist(); render();
+document.getElementById('und').disabled = true;
+});
+document.getElementById('rst').addEventListener('click', function () { Object.keys(MV).forEach(function (id) { MV[id].dx = MV[id].dy = MV[id].rot = 0; }); selMv = null; persistMv(); render(); });
+document.getElementById('unlock').addEventListener('change', function (e) { svg.classList.toggle('unlocked', e.target.checked); if (!e.target.checked && selMv !== null && MV[selMv].built) { selMv = null; render(); } });
+var tray = document.getElementById('tray');
+KINDS.forEach(function (k) {
+var b = document.createElement('button');
+b.className = 'piece'; b.type = 'button';
+var scale = Math.min(7, 96 / Math.max(k.w, 1));   // px per ft in the little preview
+b.innerHTML = '<i style="width:' + Math.max(8, k.w * scale) + 'px;height:' + Math.max(5, k.h * scale) + 'px;background:' + k.fill + (k.round ? ';border-radius:50%' : '') + (k.stroke ? ';border-color:' + k.stroke : '') + '"></i><div><b>' + k.name + '</b><span>' + k.w + ' × ' + k.h + ' ft</span></div>';
+b.addEventListener('click', function () { add(k.id); });
+tray.appendChild(b);
+});
+render();
 })();
 </script>
 </body>
