@@ -89,6 +89,12 @@ svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
 .layrow select { flex: 1; min-width: 0; }
 .layrow .btn { flex: none; }
 .layrow select.btn { flex: 1; min-width: 0; width: 100%; text-overflow: ellipsis; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .88rem; line-height: 1.4; }
+.checks li { display: flex; gap: 10px; align-items: flex-start; }
+.checks li::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; background: var(--accent); }
+.checks li.bad::before { background: var(--heat); }
+.checks li.warn::before { background: #D9A441; }
+.checks .sum { font-weight: 600; }
 @media (max-width: 520px) { .layrow #sug { display: none; } .head h1 { font-size: 1.7rem; } .size { width: 100%; } }
 </style>
 </head>
@@ -117,9 +123,15 @@ svg.unlocked .mv.built { pointer-events: auto; cursor: grab; }
 <span class="size">Size <input type="number" id="sw" min="0.25" step="0.25" disabled aria-label="Width in feet"> × <input type="number" id="sh" min="0.25" step="0.25" disabled aria-label="Depth in feet"> ft</span>
 <label class="toggle" style="margin-left:0"><input type="checkbox" id="unlock"> Move built-ins</label>
 <label class="toggle"><input type="checkbox" id="dims" checked> Show room sizes</label>
+<label class="toggle" style="margin-left:0"><input type="checkbox" id="sightT" checked> Show sight lines to the bed</label>
 </div>
 </div>
 <div class="side">
+<div class="card">
+<h2>Checks</h2>
+<p class="hint">Updates as you move things. Red outline on the plan = a piece with a problem. Red dashed lines = places in the kitchen that can see the bed.</p>
+<ul class="checks" id="checks"></ul>
+</div>
 <div class="card">
 <h2>Doors</h2>
 <p class="hint">Positions and widths are from the scan. Swing directions are my guess.</p>
@@ -309,17 +321,20 @@ var DOORS = [
 ];
 try { var sd = JSON.parse(localStorage.getItem('floorplan-15th-doors') || 'null'); if (sd) DOORS.forEach(function (d) { if (d.id in sd) d.on = !!sd[d.id]; }); } catch (e) {}
 s += '<g id="doorsLayer"></g>';
-svg.innerHTML = s + '<g id="furn"></g><g id="hnd"></g>';
+svg.innerHTML = s + '<g id="furn"></g><g id="sight" style="pointer-events:none"></g><g id="hnd"></g>';
 var doorsLayer = document.getElementById('doorsLayer');
 function renderDoors() {
 doorsLayer.innerHTML = DOORS.filter(function (d) { return d.on; }).map(function (d) { return d.svg; }).join('');
 try { var o = {}; DOORS.forEach(function (d) { o[d.id] = d.on; }); localStorage.setItem('floorplan-15th-doors', JSON.stringify(o)); } catch (e) {}
+if (checksReady) runChecks();
 }
+var checksReady = false;
 var dl = document.getElementById('doorlist');
 DOORS.forEach(function (d) {
 var li = document.createElement('li');
 li.innerHTML = '<label><input type="checkbox"' + (d.on ? ' checked' : '') + '><span>' + d.name + '<small>' + d.note + '</small></span></label>';
-li.querySelector('input').addEventListener('change', function (e) { d.on = e.target.checked; renderDoors(); });
+d.input = li.querySelector('input');
+d.input.addEventListener('change', function (e) { d.on = e.target.checked; renderDoors(); });
 dl.appendChild(li);
 });
 renderDoors();
@@ -460,6 +475,7 @@ var wi = document.getElementById('sw'), hi = document.getElementById('sh');
 wi.disabled = hi.disabled = !si;
 if (si) { var kk = kindById[si.kind]; if (document.activeElement !== wi) wi.value = si.w || kk.w; if (document.activeElement !== hi) hi.value = si.h || kk.h; } else { wi.value = hi.value = ''; }
 renderMv();
+if (checksReady) runChecks();
 }
 function add(id) {
 var k = kindById[id], n = items.length % 6;
@@ -516,14 +532,142 @@ render(); return;
 if (dragging.mv) {
 dragging.mv.dx = snap(dragging.dx0 + p.x - dragging.px); dragging.mv.dy = snap(dragging.dy0 + p.y - dragging.py);
 document.getElementById('mv-' + dragging.mv.id).setAttribute('transform', mvTransform(dragging.mv));
-drawHandles();
+drawHandles(); runChecks();
 return;
 }
 dragging.it.x = snap(p.x + dragging.dx); dragging.it.y = snap(p.y + dragging.dy);
 var g = furn.querySelector('[data-uid="' + dragging.it.uid + '"]');
 if (g) g.setAttribute('transform', 'translate(' + f(dragging.it.x) + ' ' + f(dragging.it.y) + ') rotate(' + dragging.it.rot + ')');
-drawHandles();
+drawHandles(); runChecks();
 });
+// ---------- live checks ----------
+// Everything is in feet on the plan's own grid. Walls are drawn on their centre lines, 0.35 ft thick.
+var REGIONS = [[0.1, 0.1, 12.4, 14.0], [12.6, 0.1, 17.8, 8.9], [12.6, 9.1, 15.1, 14.0], [0.1, 14.2, 8.8, 29.05], [9.0, 14.2, 12.4, 23.0], [9.0, 23.2, 15.45, 28.5],
+[2.2, 13.9, 6.45, 14.3], [12.3, 3.7, 12.7, 6.9], [9.3, 13.9, 11.9, 14.3], [8.7, 19.25, 9.1, 21.65], [9.35, 22.9, 11.45, 23.3]];
+var DECK_R = [-8.2, -1.0, -0.2, 26.5], WALKIN_R = [12.5, 0, 17.9, 9];
+var HEAT_Z = [[0, 5.7, 0.9, 13.0, 'west wall heater'], [11.6, 6.7, 12.5, 11.5, 'east wall heater'], [0, 15.4, 0.9, 20.35, 'kitchen heater']];
+var ZONES = [
+{ r: [2.2, 13.2, 6.45, 14.1], n: 'the kitchen opening' },
+{ r: [9.9, 6.9, 11.9, 14.1], n: 'the walkway from the hall door to the walk-in' },
+{ r: [10.3, 3.7, 12.5, 6.9], n: 'the walkway into the walk-in' },
+{ r: [0.2, 15.9, 2.2, 19.85], n: 'front of the window out to the deck', warn: true },
+{ r: [10.1, 11.4, 12.5, 13.8], n: 'the small closet door’s swing', door: 'closet' },
+{ r: [9.3, 3.7, 12.5, 6.9], n: 'the walk-in door’s swing', door: 'walkin' },
+{ r: [2.2, 14.1, 6.45, 16.225], n: 'the kitchen doors’ swing', door: 'kitchenMain' },
+{ r: [9.3, 14.1, 11.9, 16.7], n: 'the hall door’s swing', door: 'hallMain' },
+{ r: [7.3, 15.0, 8.9, 16.6], n: 'the ironing board door’s swing', door: 'iron' },
+{ r: [6.5, 19.25, 8.9, 21.65], n: 'the kitchen hall door’s swing', door: 'kitchenHall' }
+];
+// closed door leaves and the curtain block the view
+var DOOR_SEGS = { hallMain: [[9.3, 14.1], [11.9, 14.1]], walkin: [[12.5, 3.7], [12.5, 6.9]], walkinCurtain: [[12.5, 3.7], [12.5, 6.9]], kitchenHall: [[8.9, 19.25], [8.9, 21.65]], kitchenMain: [[2.2, 14.1], [6.45, 14.1]] };
+var BUILT_OBST = ['counterW', 'counterS', 'counterE', 'range', 'sink', 'fridge', 'cabinet', 'breaker', 'wc', 'vanity', 'tub'];
+var VIEWS = [['the kitchen (middle)', 4.3, 16.2], ['the kitchen (west side)', 2.2, 18.5], ['the kitchen (east side)', 6.8, 18.0]];
+var BLOCKS = { curtain: 1, shelf: 1 };   // tall pieces that stop the eye
+var bayPts = [[1.9, 0], [3.4, -1.8], [9.2, -1.8], [10.7, 0]];
+var WALLSEGS = W.map(function (w) { return [[w[0], w[1]], [w[2], w[3]]]; }).concat([[bayPts[0], bayPts[1]], [bayPts[1], bayPts[2]], [bayPts[2], bayPts[3]]]);
+function inR(r, x, y) { return x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3]; }
+function inBay(x, y) { if (y < -1.7 || y > 0.15) return false; var t = Math.max(0, -y) / 1.8; return x >= 1.9 + 1.5 * t + 0.1 && x <= 10.7 - 1.5 * t - 0.1; }
+function toWorld(cx, cy, rot, lx, ly) { var a = rot * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a); return [cx + lx * c - ly * sn, cy + lx * sn + ly * c]; }
+function polyOf(cx, cy, w, h, rot) { return [[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]].map(function (p) { return toWorld(cx, cy, rot, p[0], p[1]); }); }
+function rectPoly(r) { return [[r[0], r[1]], [r[2], r[1]], [r[2], r[3]], [r[0], r[3]]]; }
+function sat(A, B) {
+var polys = [A, B];
+for (var i = 0; i < 2; i++) { var P = polys[i]; for (var j = 0; j < P.length; j++) {
+var p = P[j], q = P[(j + 1) % P.length], nx = q[1] - p[1], ny = p[0] - q[0], len = Math.hypot(nx, ny) || 1; nx /= len; ny /= len;
+var a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+A.forEach(function (v) { var d = v[0] * nx + v[1] * ny; a0 = Math.min(a0, d); a1 = Math.max(a1, d); });
+B.forEach(function (v) { var d = v[0] * nx + v[1] * ny; b0 = Math.min(b0, d); b1 = Math.max(b1, d); });
+if (a1 <= b0 + 0.02 || b1 <= a0 + 0.02) return false;
+} }
+return true;
+}
+function segX(p, q, a, b) { function o(u, v, w) { return (w[0] - u[0]) * (v[1] - u[1]) - (w[1] - u[1]) * (v[0] - u[0]); } return o(p, q, a) * o(p, q, b) < 0 && o(a, b, p) * o(a, b, q) < 0; }
+function segPoly(p, q, P) { for (var i = 0; i < P.length; i++) if (segX(p, q, P[i], P[(i + 1) % P.length])) return true; return false; }
+function dimsOf(it) { var k = kindById[it.kind]; return [it.w || k.w, it.h || k.h]; }
+function itPoly(it) {
+var d = dimsOf(it);
+if (kindById[it.kind].round) { var pts = []; for (var a = 0; a < 12; a++) pts.push(toWorld(it.x, it.y, it.rot, Math.cos(a * Math.PI / 6) * d[0] / 2, Math.sin(a * Math.PI / 6) * d[1] / 2)); return pts; }
+return polyOf(it.x, it.y, d[0], d[1], it.rot);
+}
+var TUCK = { 'desk|dchair': 1, 'dchair|desk': 1, 'dining|dchair': 1, 'dchair|dining': 1, 'console|proj': 1, 'proj|console': 1 };   // chairs slide under tables
+function itName(it) { var k = kindById[it.kind]; return k.short ? k.short.toLowerCase() : k.name.toLowerCase(); }
+function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+function doorOn(id) { return DOORS.some(function (d) { return d.id === id && d.on; }); }
+function runChecks() {
+var list = [], bad = {}, i, j;
+var live = items.filter(function (it) { return it.kind !== 'proj' && it.kind !== 'screen'; });
+var P = {}; live.forEach(function (it) { P[it.uid] = itPoly(it); });
+function add(cls, txt, it) { list.push({ c: cls, t: txt }); if (it && cls === 'bad') bad[it.uid] = 1; }
+// pieces on top of each other
+for (i = 0; i < live.length; i++) for (j = i + 1; j < live.length; j++) {
+var a = live[i], b = live[j];
+if (a.kind === 'curtain' || b.kind === 'curtain' || TUCK[a.kind + '|' + b.kind]) continue;
+if (sat(P[a.uid], P[b.uid])) { add('bad', cap(itName(a)) + ' overlaps the ' + itName(b) + '.', a); bad[b.uid] = 1; }
+}
+live.forEach(function (it) {
+var k = kindById[it.kind], d = dimsOf(it), ok = true;
+// every sample point of the footprint has to be on usable floor
+var nx = Math.max(2, Math.ceil(d[0] / 0.25)), ny = Math.max(2, Math.ceil(d[1] / 0.25));
+for (var u = 0; u <= nx && ok; u++) for (var v = 0; v <= ny && ok; v++) {
+var lx = -d[0] / 2 + 0.05 + (d[0] - 0.1) * u / nx, ly = -d[1] / 2 + 0.05 + (d[1] - 0.1) * v / ny;
+if (k.round && (lx * lx) / (d[0] * d[0] / 4) + (ly * ly) / (d[1] * d[1] / 4) > 1) continue;
+var p = toWorld(it.x, it.y, it.rot, lx, ly);
+var inside = k.deck ? inR(DECK_R, p[0], p[1]) : (REGIONS.some(function (r) { return inR(r, p[0], p[1]); }) || inBay(p[0], p[1]));
+if (!inside) ok = false;
+}
+if (!ok) {
+var extra = '';
+if ((it.kind === 'bed' || it.kind === 'lowbed') && inR(WALKIN_R, it.x, it.y)) extra = ' The walk-in floor is only 60 to 64 in wide; this frame is ' + Math.round(Math.min(d[0], d[1]) * 12) + ' in.';
+add('bad', cap(itName(it)) + (k.deck ? ' is off the deck.' : ' runs into a wall or off the floor.') + extra, it);
+}
+if (k.deck) return;
+BUILT_OBST.forEach(function (id) { var m = MV[id]; if (m && sat(P[it.uid], polyOf(m.cx + m.dx, m.cy + m.dy, m.w, m.h, m.rot))) add('bad', cap(itName(it)) + ' hits the ' + m.name.toLowerCase() + '.', it); });
+HEAT_Z.forEach(function (z) { if (sat(P[it.uid], rectPoly(z))) add('bad', cap(itName(it)) + ' is closer than 6 in to the ' + z[4] + '.', it); });
+ZONES.forEach(function (z) {
+if (z.door && !doorOn(z.door)) return;
+if (sat(P[it.uid], rectPoly(z.r))) add(z.warn ? 'warn' : 'bad', cap(itName(it)) + ' is in ' + z.n + '.', it);
+});
+});
+// can the bed be seen from the kitchen or the dining table?
+var beds = items.filter(function (it) { return it.kind === 'bed' || it.kind === 'lowbed'; });
+var views = VIEWS.slice();
+items.filter(function (it) { return it.kind === 'dining'; }).forEach(function (it) { views.push(['the dining table', it.x, it.y]); });
+var segs = WALLSEGS.slice();
+Object.keys(DOOR_SEGS).forEach(function (id) { if (doorOn(id)) segs.push(DOOR_SEGS[id]); });
+var blockers = live.filter(function (it) { return BLOCKS[it.kind]; }).map(function (it) { return P[it.uid]; });
+var lines = [];
+if (!beds.length) list.push({ c: 'warn', t: 'No bed on the plan yet.' });
+beds.forEach(function (bd) {
+var d = dimsOf(bd), samp = [[0, 0], [-d[0] / 2 + 0.35, -d[1] / 2 + 0.35], [d[0] / 2 - 0.35, -d[1] / 2 + 0.35], [-d[0] / 2 + 0.35, d[1] / 2 - 0.35], [d[0] / 2 - 0.35, d[1] / 2 - 0.35]].map(function (s) { return toWorld(bd.x, bd.y, bd.rot, s[0], s[1]); });
+var others = blockers.filter(function (pp) { return pp !== P[bd.uid]; });
+views.forEach(function (v) {
+var vp = [v[1], v[2]], seen = 0;
+samp.forEach(function (sp) {
+var hit = segs.some(function (sg) { return segX(vp, sp, sg[0], sg[1]); }) || others.some(function (pp) { return segPoly(vp, sp, pp); });
+if (!hit) { seen++; lines.push([vp, sp]); }
+});
+if (seen) add('bad', 'The bed can be seen from ' + v[0] + '.', bd); else list.push({ c: 'ok', t: 'The bed is hidden from ' + v[0] + '.' });
+});
+});
+var nBad = list.filter(function (l) { return l.c === 'bad'; }).length;
+var head = '<li class="' + (nBad ? 'bad' : 'ok') + ' sum">' + (nBad ? nBad + (nBad === 1 ? ' thing to fix' : ' things to fix') : 'Nothing to fix') + '</li>';
+document.getElementById('checks').innerHTML = head + list.map(function (l) { return '<li class="' + l.c + '">' + l.t + '</li>'; }).join('');
+// outline pieces with a problem
+furn.querySelectorAll('.item').forEach(function (g) {
+var r = g.firstChild; if (!r) return;
+if (!r.getAttribute('data-s')) r.setAttribute('data-s', r.getAttribute('stroke') + '|' + r.getAttribute('stroke-width'));
+var o = r.getAttribute('data-s').split('|'), u = +g.getAttribute('data-uid');
+if (bad[u] && u !== selected) { r.setAttribute('stroke', '#CD463C'); r.setAttribute('stroke-width', '0.13'); }
+else { r.setAttribute('stroke', o[0]); r.setAttribute('stroke-width', o[1]); }
+});
+var sl = '';
+if (document.getElementById('sightT').checked) {
+lines.forEach(function (l) { sl += '<line x1="' + f(l[0][0]) + '" y1="' + f(l[0][1]) + '" x2="' + f(l[1][0]) + '" y2="' + f(l[1][1]) + '" stroke="#CD463C" stroke-width="0.06" stroke-dasharray="0.25 0.18" stroke-opacity=".75"/>'; });
+if (beds.length) views.forEach(function (v) { sl += '<circle cx="' + f(v[1]) + '" cy="' + f(v[2]) + '" r="0.2" fill="#fff" stroke="#3C5A8C" stroke-width="0.07"/>'; });
+}
+document.getElementById('sight').innerHTML = sl;
+}
+document.getElementById('sightT').addEventListener('change', runChecks);
 function endDrag() {
 if (!dragging) return;
 if (dragging.handle === 'rot' && !dragging.moved) { dragging.tgt.rot = (dragging.tgt.rot + 90) % 360; }
@@ -620,13 +764,21 @@ var LAYOUTS = [
 ['desk', 7.0, 1.365, 0], ['dchair', 7.0, 3.55, 180], ['plant', 3.9, -0.8, 0], ['plant', 10.0, -0.5, 0],
 ['recliner', 2.0, 2.6, 90], ['ottoman', 2.0, 5.3, 0], ['dresser', 11.55, 1.9, 90],
 ['sofa', 2.05, 9.95, 270], ['love', 8.5, 9.95, 90], ['bedside', 5.3, 9.95, 0], ['lamp', 4.4, 7.0, 0], ['vanity', 7.875, 13.2, 180],
-['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) }
+['love', 2.05, 18.5, 270], ['dining', 4.8, 18.5, 90]].concat(DECK) },
+{ n: 17, name: 'Bed hidden: low bed behind the walk-in curtain, bay seats, cinema (passes every check)', doors: { walkinCurtain: true }, items: [['lowbed', 15.2, 5.2, 0], ['bedside', 16.9, 1.0, 0],
+['desk', 1.4, 3.1, 270], ['dchair', 3.6, 3.1, 90], ['dresser', 11.55, 1.9, 90],
+['recliner', 4.6, 0.4, 180], ['love', 7.6, 0.4, 180], ['plant', 10.0, 1.2, 0], ['plant', 9.5, 3.0, 0], ['love', 7.8, 5.3, 90],
+['screen', 0.5, 9.8, 90], ['console', 1.55, 9.8, 270], ['proj', 1.65, 9.8, 90],
+['sofa', 8.3, 9.75, 90], ['ottoman', 5.4, 9.75, 90], ['lamp', 4.0, 7.0, 0], ['shelf', 4.5, 12.4, 180], ['vanity', 7.875, 13.2, 180],
+['dining', 4.8, 18.5, 90]].concat(DECK) }
 ];
 var laySel = document.getElementById('lay');
 LAYOUTS.forEach(function (L, i) { var o = document.createElement('option'); o.value = i; o.textContent = L.n + '. ' + L.name; laySel.appendChild(o); });
 var LAYOUT = LAYOUTS[0].items;
 function loadLayout() {
 LAYOUT = LAYOUTS[+laySel.value].items;
+var LD = LAYOUTS[+laySel.value].doors;
+if (LD) { DOORS.forEach(function (d) { if (d.id in LD) { d.on = !!LD[d.id]; if (d.input) d.input.checked = d.on; } }); renderDoors(); }
 undoItems = { items: items, uid: uid };
 items = LAYOUT.map(function (l) { var it = { uid: uid++, kind: l[0], x: l[1], y: l[2], rot: l[3] }; if (l[4]) it.w = l[4]; if (l[5]) it.h = l[5]; return it; });
 selected = null; selMv = null; persist(); render();
@@ -674,6 +826,8 @@ b.innerHTML = '<i style="width:' + Math.max(8, k.w * scale) + 'px;height:' + Mat
 b.addEventListener('click', function () { add(k.id); });
 tray.appendChild(b);
 });
+checksReady = true;
+if (!items.length) { laySel.value = String(LAYOUTS.length - 1); loadLayout(); document.getElementById('und').disabled = true; }
 render();
 })();
 </script>
